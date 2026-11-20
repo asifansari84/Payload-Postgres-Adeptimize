@@ -1,0 +1,93 @@
+.section {
+  padding-block: 3.75rem 2.5rem;
+}
+
+.layout {
+  display: grid;
+  gap: 3rem;
+}
+
+.title {
+  color: var(--color-navy);
+  font-size: clamp(1.125rem, 0.9625rem + 0.6667vw, 1.5625rem);
+  line-height: 1.25;
+}
+
+.body {
+  max-inline-size: 34rem;
+  margin-block-start: 1.5rem;
+}
+
+.body p + p {
+  margin-block-start: 1em;
+}
+
+.more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-block-start: 1.5rem;
+  padding-block: 0.25rem;
+  color: var(--color-navy);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.more svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  transition: translate 250ms var(--ease-out);
+}
+
+.more:hover svg {
+  translate: 2px -2px;
+}
+
+.logos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+  align-items: center;
+  justify-items: center;
+}
+
+.logo {
+  inline-size: 100%;
+  max-inline-size: 8rem;
+  margin-inline: auto;
+  aspect-ratio: 1;
+  object-fit: contain;
+}
+
+.logos li {
+  inline-size: 100%;
+  text-align: center;
+}
+
+.logos a {
+  display: block;
+}
+
+@media (min-width: 64rem) {
+  .section {
+    padding-block: 7.8rem 7rem;
+  }
+
+  .layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 37.75rem);
+    gap: 2rem;
+    padding-inline: 4.2rem 2.5rem;
+  }
+
+  .intro {
+    padding-block-start: 2.2rem;
+  }
+
+  .logos {
+    column-gap: 3.875rem;
+    row-gap: 2.8rem;
+  }
+}

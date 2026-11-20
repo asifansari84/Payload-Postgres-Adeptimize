@@ -1,0 +1,42 @@
+.section {
+  --surface: var(--color-navy);
+  padding-block: 3.125rem 5rem;
+  background: var(--surface);
+  color: var(--color-white);
+  text-align: center;
+}
+
+.title {
+  max-inline-size: 16ch;
+  margin-inline: auto;
+  font-size: var(--fs-display);
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.text {
+  max-inline-size: 70rem;
+  margin: 1.6rem auto 0;
+}
+
+.logos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem 3.5rem;
+  margin-block-start: 3.5rem;
+}
+
+.logo {
+  inline-size: auto;
+  block-size: clamp(4rem, 3rem + 4vw, 7.5rem);
+  max-inline-size: 12rem;
+  object-fit: contain;
+}
+
+@media (min-width: 64rem) {
+  .section {
+    padding-block: 3.125rem 6.25rem;
+  }
+}

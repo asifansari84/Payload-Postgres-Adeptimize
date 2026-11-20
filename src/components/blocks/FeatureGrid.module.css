@@ -1,0 +1,74 @@
+.section {
+  padding-block: 1.25rem 5rem;
+}
+
+.section[data-has-heading] {
+  padding-block-start: 5rem;
+}
+
+.title {
+  margin-block-end: 2.5rem;
+  color: var(--color-navy);
+  font-size: var(--fs-display);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.title :global(.outline-text) {
+  font-weight: 600;
+}
+
+.grid {
+  display: grid;
+  gap: 2.5rem;
+}
+
+.cardTitle {
+  color: var(--color-navy);
+  font-size: var(--fs-card-title);
+  line-height: 1.35;
+}
+
+.number {
+  display: block;
+  margin-block-end: 0.15em;
+  font-size: var(--fs-card-num);
+  font-weight: 500;
+  letter-spacing: 1px;
+  line-height: 1;
+}
+
+.card p {
+  max-inline-size: 25rem;
+  margin-block-start: 1.25rem;
+}
+
+@media (min-width: 48rem) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2.625rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .section {
+    padding-block: 5.9rem 8.75rem;
+  }
+
+  .section[data-has-heading] {
+    padding-block-start: 7.25rem;
+    padding-inline: 0.625rem;
+  }
+
+  .title {
+    margin-block-end: 2.875rem;
+  }
+
+  .cardTitle {
+    line-height: 1.13;
+  }
+
+  .card p {
+    margin-block-start: 1.85rem;
+  }
+}

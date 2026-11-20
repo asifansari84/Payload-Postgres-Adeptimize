@@ -1,0 +1,131 @@
+.section {
+  padding-block: 5rem 1.25rem;
+}
+
+.stackedTitle {
+  display: grid;
+  justify-items: start;
+  text-transform: uppercase;
+}
+
+.stackedOutline {
+  --outline-color: #41aa6b;
+  --outline-width: 0.035em;
+  margin-block-end: -0.3em;
+  font-size: clamp(40px, 1.6rem + 3.4vw, 70px);
+  font-weight: 500;
+  letter-spacing: 2px;
+  line-height: 1.25;
+}
+
+.stackedSolid {
+  color: #094265;
+  font-size: clamp(40px, 1.6rem + 3.4vw, 70px);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.title {
+  color: var(--color-navy);
+  font-size: clamp(1.875rem, 1.387rem + 2vw, 3.188rem);
+  line-height: 1.13;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: min(17rem, 75vw);
+  gap: 1.8rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gutter);
+  padding: 3.125rem var(--gutter) 3.75rem;
+  scrollbar-width: none;
+}
+
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 4.5rem 1.5625rem 1.5625rem;
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  scroll-snap-align: start;
+}
+
+/* Every other card flips: image first, number badge at the bottom. */
+.card:nth-child(even) {
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  padding: 1.5625rem 1.5625rem 4.5rem;
+}
+
+.number {
+  position: absolute;
+  inset-block-start: -3.125rem;
+  inset-inline-start: 50%;
+  display: grid;
+  place-items: center;
+  inline-size: 6.25rem;
+  aspect-ratio: 1;
+  border: 0.9375rem solid var(--color-surface);
+  border-radius: 50%;
+  background: var(--color-white);
+  color: var(--color-green);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 500;
+  translate: -50% 0;
+}
+
+.card:nth-child(even) .number {
+  inset-block: auto -3.125rem;
+}
+
+.cardTitle {
+  padding-inline: 1.25rem;
+  color: var(--color-navy);
+  font-size: clamp(1.375rem, 1.305rem + 0.2857vw, 1.5625rem);
+  line-height: 1.07;
+}
+
+.link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.link:focus-visible {
+  outline: none;
+}
+
+.card:has(.link:focus-visible) {
+  outline: 2px solid var(--color-green);
+  outline-offset: 3px;
+}
+
+.image {
+  inline-size: 100%;
+  aspect-ratio: 281 / 334;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+}
+
+@media (min-width: 64rem) {
+  .section {
+    padding-block: 7rem 2rem;
+  }
+
+  .track {
+    grid-auto-columns: 20.6875rem;
+  }
+}

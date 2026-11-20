@@ -1,0 +1,256 @@
+/* Shared */
+
+.display {
+  color: var(--color-navy);
+  font-size: var(--fs-display);
+  text-transform: uppercase;
+}
+
+.light {
+  color: var(--color-white);
+}
+
+.center {
+  text-align: center;
+}
+
+/* Intro and form */
+
+.intro {
+  padding-block: var(--section-space);
+}
+
+.introLayout {
+  display: grid;
+  gap: 3rem;
+  align-items: start;
+}
+
+.introText {
+  display: grid;
+  gap: 1rem;
+  color: var(--color-ink);
+}
+
+.subheading {
+  color: var(--color-navy);
+  font-family: var(--font-display);
+  font-size: var(--fs-card-title);
+  font-weight: 600;
+}
+
+.formCard {
+  padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+  border-radius: var(--radius-lg);
+  background: var(--color-white);
+  box-shadow: 0 1.5rem 3rem -1.5rem rgb(7 54 83 / 0.25);
+}
+
+.form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.field label {
+  color: var(--color-navy);
+  font-weight: 600;
+}
+
+.input {
+  inline-size: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--color-muted);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+
+.input:focus-visible {
+  border-color: var(--color-navy);
+  outline-offset: 0;
+}
+
+textarea.input {
+  resize: vertical;
+}
+
+.form :global(.button) {
+  justify-self: start;
+}
+
+.notice {
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-sky);
+  color: var(--color-navy);
+  font-weight: 600;
+}
+
+.notice[data-state='error'] {
+  background: #fde8e8;
+  color: #8a1c1c;
+}
+
+.honeypot {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+@media (min-width: 48rem) {
+  .form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .field[data-wide],
+  .notice,
+  .form :global(.button) {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 64rem) {
+  .introLayout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: 4rem;
+  }
+}
+
+/* Contact details */
+
+.details {
+  --surface: var(--color-navy);
+  padding-block: var(--section-space);
+  background: var(--surface);
+  color: var(--color-white);
+}
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: 2rem;
+  margin-block-start: 2.5rem;
+}
+
+.detailGrid > div {
+  display: grid;
+  gap: 0.5rem;
+  align-content: start;
+  padding-block-start: 1.25rem;
+  border-block-start: 1px solid rgb(255 255 255 / 0.25);
+}
+
+.detailGrid dt {
+  color: var(--color-green);
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.detailGrid dd {
+  display: grid;
+  margin: 0;
+}
+
+.detailGrid a:hover {
+  color: var(--color-green);
+}
+
+.note {
+  margin-block-start: 2.5rem;
+  font-family: var(--font-display);
+  font-size: var(--fs-card-title);
+}
+
+.map {
+  display: block;
+  inline-size: 100%;
+  block-size: clamp(18rem, 14rem + 15vw, 28rem);
+  margin-block-start: 3rem;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--color-ocean);
+}
+
+/* What to expect */
+
+.expect {
+  padding-block: var(--section-space);
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: 1.5rem;
+  margin-block-start: 3rem;
+}
+
+.step {
+  --surface: var(--color-white);
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+  padding: 2rem;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.stepNumber {
+  font-family: var(--font-display);
+  font-size: var(--fs-card-num);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.step h3 {
+  color: var(--color-navy);
+  font-size: var(--fs-card-title);
+}
+
+.step p {
+  color: var(--color-ink);
+}
+
+/* Call to action */
+
+.cta {
+  padding-block: 0 var(--section-space);
+}
+
+.ctaLayout {
+  display: grid;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.ctaImage {
+  inline-size: 100%;
+  border-radius: var(--radius-lg);
+  object-fit: cover;
+}
+
+.ctaText {
+  display: grid;
+  gap: 1rem;
+  color: var(--color-ink);
+}
+
+.ctaText a {
+  color: var(--color-navy);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+@media (min-width: 64rem) {
+  .ctaLayout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 4rem;
+  }
+}

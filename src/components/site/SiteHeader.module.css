@@ -1,0 +1,61 @@
+.header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 30;
+  background: var(--color-sky);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-block-size: var(--header-height);
+  padding-inline: 2.5rem;
+}
+
+.logo img {
+  inline-size: 7.5rem;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.button {
+  display: none;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.6875rem 1.75rem;
+  border: 2px solid var(--color-navy);
+  border-radius: var(--radius-sm);
+  color: var(--color-navy);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-transform: uppercase;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+.button svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.button:hover {
+  background: var(--color-navy);
+  color: var(--color-white);
+}
+
+@media (min-width: 64rem) {
+  .logo img {
+    inline-size: 9.1875rem;
+  }
+
+  .button {
+    display: inline-flex;
+  }
+}

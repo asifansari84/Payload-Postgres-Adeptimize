@@ -1,0 +1,104 @@
+.hero {
+  padding-block-start: clamp(2.25rem, 1.5rem + 3vw, 4.375rem);
+}
+
+.heading {
+  text-align: center;
+}
+
+.title {
+  max-inline-size: 24ch;
+  margin-inline: auto;
+  font-size: var(--fs-hero);
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  margin-block-start: 0.4em;
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: var(--fs-hero-sub);
+  font-weight: 900;
+  line-height: 1.2;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.highlights {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  margin-block: 1.75rem 1.5rem;
+}
+
+.highlight {
+  color: var(--color-navy);
+  font-family: var(--font-display);
+  font-size: var(--fs-badge);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.scroll {
+  display: grid;
+  place-items: center;
+  inline-size: 4.375rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--color-navy);
+  color: var(--color-white);
+  transition: scale 300ms var(--ease-out);
+}
+
+.scroll:hover {
+  scale: 1.06;
+}
+
+.scroll svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.image {
+  inline-size: 100%;
+  block-size: clamp(8.75rem, 2.25rem + 26.7vw, 35rem);
+  border-radius: 1.25rem;
+  object-fit: cover;
+}
+
+@media (min-width: 48rem) {
+  .highlights {
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 3.75rem;
+    margin-block: 7rem -4.2rem;
+  }
+
+  .highlight {
+    inline-size: 12rem;
+    padding-block-start: 1.4rem;
+  }
+
+  .highlight:first-child {
+    text-align: end;
+  }
+
+  .scroll {
+    inline-size: 10.9375rem;
+    box-shadow: 0 0 0 0.75rem var(--color-surface);
+  }
+
+  .scroll svg {
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
+  }
+}
+

@@ -1,0 +1,299 @@
+.slider {
+  position: relative;
+  overflow: hidden;
+  block-size: calc(100svh - var(--header-height));
+  min-block-size: 32rem;
+  max-block-size: 60rem;
+  background: var(--color-navy);
+  color: var(--color-white);
+}
+
+.slider {
+  --ease-glide: cubic-bezier(0.77, 0, 0.18, 1);
+  --ease-settle: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --wipe: 1300ms;
+}
+
+.track {
+  position: relative;
+  block-size: 100%;
+}
+
+/* All slides are stacked; only the active and the leaving slide are shown. */
+.slide {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-items: center;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+.slide[data-state] {
+  visibility: visible;
+}
+
+.slide[data-state='leaving'] {
+  z-index: 1;
+}
+
+.slide[data-state='active'] {
+  z-index: 2;
+}
+
+.media {
+  position: absolute;
+  inset: 0;
+}
+
+.media img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+.media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgb(7 54 83 / 0.55), rgb(7 54 83 / 0.2) 75%);
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.title {
+  position: relative;
+  display: inline-block;
+  max-inline-size: min(50rem, 85%);
+  text-wrap: balance;
+  font-size: clamp(25px, 1rem + 5vw, 6rem);
+  font-weight: 700;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+/* Each word rises out of its own mask, one after another. */
+.word {
+  display: inline-block;
+  overflow: hidden;
+  padding-block: 0.08em;
+  margin-block: -0.08em;
+  vertical-align: top;
+}
+
+.word + .word {
+  margin-inline-start: 0.28em;
+}
+
+.word > span {
+  display: inline-block;
+}
+
+.title a:hover {
+  color: var(--color-green);
+}
+
+.icon {
+  position: absolute;
+  inset-block-start: -3.5rem;
+  inset-inline-end: -4rem;
+  inline-size: clamp(3rem, 2rem + 3vw, 5.75rem);
+}
+
+.icon img {
+  inline-size: 100%;
+  block-size: auto;
+}
+
+@keyframes hang {
+  0%, 100% { rotate: -8deg; }
+  50% { rotate: 8deg; }
+}
+
+@keyframes pulse {
+  0%, 100% { scale: 1; }
+  50% { scale: 1.12; }
+}
+
+@keyframes spin {
+  to { rotate: 360deg; }
+}
+
+/* Prev / dots / Next */
+
+.controls {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: clamp(1.5rem, 1rem + 2vw, 3rem);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  border: 0;
+  background: none;
+  color: var(--color-white);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 200ms ease;
+}
+
+.nav svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.nav:hover {
+  color: var(--color-green);
+}
+
+.dots {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.dot {
+  inline-size: 0.6rem;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 1px solid var(--color-white);
+  border-radius: 50%;
+  background: transparent;
+  transition: background-color 200ms ease, scale 200ms ease;
+}
+
+.dot[aria-current] {
+  background: var(--color-white);
+  scale: 1.25;
+}
+
+.pause {
+  display: grid;
+  place-items: center;
+  inline-size: 2rem;
+  aspect-ratio: 1;
+  margin-inline-start: 0.5rem;
+  border: 1px solid rgb(255 255 255 / 0.5);
+  border-radius: 50%;
+  background: none;
+  color: var(--color-white);
+}
+
+.pause svg {
+  fill: currentColor;
+}
+
+/* ---------- Motion ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Incoming slide wipes in from the side it travels from. */
+  .track[data-direction='next'] .slide[data-state='active'] {
+    animation: wipe-from-right var(--wipe) var(--ease-glide) both;
+  }
+
+  .track[data-direction='prev'] .slide[data-state='active'] {
+    animation: wipe-from-left var(--wipe) var(--ease-glide) both;
+  }
+
+  /* Its image starts offset and zoomed, then settles a little after the wipe. */
+  .track[data-direction='next'] .slide[data-state='active'] .media {
+    animation: settle-from-right calc(var(--wipe) + 900ms) var(--ease-settle) both;
+  }
+
+  .track[data-direction='prev'] .slide[data-state='active'] .media {
+    animation: settle-from-left calc(var(--wipe) + 900ms) var(--ease-settle) both;
+  }
+
+  /* The outgoing image eases away more slowly, for depth. */
+  .track[data-direction='next'] .slide[data-state='leaving'] .media {
+    animation: drift-left var(--wipe) var(--ease-glide) both;
+  }
+
+  .track[data-direction='prev'] .slide[data-state='leaving'] .media {
+    animation: drift-right var(--wipe) var(--ease-glide) both;
+  }
+
+  .slide[data-state='leaving'] .content {
+    animation: fade-out 500ms ease both;
+  }
+
+  /* Words rise in with a staggered, slightly uneven rhythm. */
+  .slide[data-state='active'] .word > span {
+    animation: rise 1000ms var(--ease-settle) both;
+    animation-delay: calc(650ms + var(--i, 0) * 110ms + var(--i, 0) * var(--i, 0) * 12ms);
+  }
+
+  /* The icon arrives last with a soft spring, then keeps its idle motion. */
+  .slide[data-state='active'] .icon {
+    animation: pop 900ms var(--ease-spring) 1250ms both;
+  }
+
+  .slide[data-state='active'] .icon > :global(*) {
+    animation: var(--idle);
+    animation-delay: 2150ms;
+  }
+
+  .icon[data-animation='hang'] { --idle: hang 3s ease-in-out infinite; }
+  .icon[data-animation='hang'] > :global(*) { transform-origin: 50% 0; }
+  .icon[data-animation='pulse'] { --idle: pulse 2.4s ease-in-out infinite; }
+  .icon[data-animation='spin'] { --idle: spin 8s linear infinite; }
+}
+
+@keyframes wipe-from-right {
+  from { clip-path: inset(0 0 0 100%); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes wipe-from-left {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes settle-from-right {
+  from { translate: 14% 0; scale: 1.18; }
+  to { translate: 0 0; scale: 1; }
+}
+
+@keyframes settle-from-left {
+  from { translate: -14% 0; scale: 1.18; }
+  to { translate: 0 0; scale: 1; }
+}
+
+@keyframes drift-left {
+  to { translate: -10% 0; scale: 1.05; filter: brightness(0.7); }
+}
+
+@keyframes drift-right {
+  to { translate: 10% 0; scale: 1.05; filter: brightness(0.7); }
+}
+
+@keyframes fade-out {
+  to { opacity: 0; translate: 0 -0.75rem; }
+}
+
+@keyframes rise {
+  from { translate: 0 110%; rotate: 4deg; opacity: 0; }
+  to { translate: 0 0; rotate: 0deg; opacity: 1; }
+}
+
+@keyframes pop {
+  from { scale: 0; rotate: -25deg; opacity: 0; }
+  to { scale: 1; rotate: 0deg; opacity: 1; }
+}

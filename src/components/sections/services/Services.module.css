@@ -1,0 +1,284 @@
+.display {
+  color: var(--color-navy);
+  font-size: var(--fs-display);
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
+/* Image banner */
+
+.banner {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-block-size: 80vh;
+  overflow: hidden;
+  background: var(--color-navy);
+  color: var(--color-white);
+  text-align: center;
+}
+
+.bannerImage {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+.bannerContent {
+  position: relative;
+  z-index: 1;
+  padding-block: 4rem;
+}
+
+.bannerTitle {
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+@media (min-width: 48rem) {
+  .bannerTitle {
+    font-size: 70px;
+  }
+}
+
+@media (min-width: 64.0625rem) {
+  .bannerTitle {
+    font-size: 80px;
+  }
+}
+
+.bannerSubtitle {
+  margin-block-start: 1rem;
+  font-family: var(--font-display);
+  font-size: var(--fs-hero-sub);
+}
+
+/* Intro and counters: one row on desktop (40% text, three 20% counters, 5% gaps) */
+
+.intro {
+  padding-block: 60px 35px;
+}
+
+.introRow {
+  display: grid;
+  gap: 2.5rem;
+}
+
+.introHead {
+  display: grid;
+  align-content: start;
+}
+
+.introTitle {
+  margin-block-end: 15px;
+  color: #073653;
+  font-size: 30px;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.introTitle :global(.outline-text) {
+  --surface: #f2f9fe;
+  --outline-color: var(--color-green);
+}
+
+.lead {
+  max-inline-size: 73%;
+  color: #0d0d0d;
+}
+
+.counter {
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  color: #0d0d0d;
+}
+
+.counterValue {
+  display: flex;
+  align-items: center;
+  color: var(--color-green);
+  font-family: var(--font-display);
+  font-size: 45px;
+  font-weight: 700;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.suffix {
+  color: var(--color-green);
+}
+
+.counterLabel {
+  margin-block-end: 10px;
+  color: #153451;
+  font-size: 1.15rem;
+  line-height: 1.3;
+}
+
+@media (min-width: 48rem) {
+  .intro {
+    padding-block: 80px 55px;
+  }
+
+  .introRow {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 5%;
+  }
+
+  .introHead {
+    grid-column: 1 / -1;
+  }
+
+  .introTitle {
+    font-size: 37px;
+  }
+}
+
+@media (min-width: 64.0625rem) {
+  .intro {
+    padding-block: 140px 95px;
+  }
+
+  .introRow {
+    grid-template-columns: minmax(0, 40fr) repeat(3, minmax(0, 20fr));
+    column-gap: 5%;
+    padding-inline: 4%;
+  }
+
+  .introHead {
+    grid-column: auto;
+    padding-inline-end: 2%;
+  }
+
+  .introTitle {
+    font-size: 45px;
+  }
+}
+
+/* Call to action */
+
+.cta {
+  padding-block: var(--section-space);
+}
+
+.ctaLayout {
+  display: grid;
+  gap: clamp(1.25rem, 0.9rem + 1.2vw, 1.875rem);
+}
+
+.ctaImage {
+  inline-size: 100%;
+  block-size: 100%;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+}
+
+.ctaBox {
+  --surface: var(--color-navy);
+  position: relative;
+  display: grid;
+  gap: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+  align-content: space-between;
+  justify-items: start;
+  min-block-size: clamp(18rem, 14rem + 12vw, 28rem);
+  overflow: hidden;
+  padding: clamp(1.75rem, 1rem + 3vw, 3.5rem);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--color-white);
+}
+
+/* Decorative curves tucked into the corner, kept behind the content. */
+.ctaBackground {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-end: 0;
+  inline-size: 55%;
+  block-size: auto;
+  max-block-size: 70%;
+  object-fit: contain;
+  object-position: bottom right;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.ctaTitle {
+  position: relative;
+  max-inline-size: 12ch;
+  font-size: clamp(2rem, 1.3rem + 2.6vw, 3.5rem);
+  line-height: 1.08;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.badgeLink {
+  position: relative;
+  display: inline-block;
+  border-radius: 50%;
+}
+
+.badge {
+  position: relative;
+  display: grid;
+  place-items: center;
+  inline-size: 100px;
+  aspect-ratio: 1;
+  margin: 0 0 -11px -12px;
+  color: var(--color-white);
+}
+
+.badgeRing {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  fill: currentColor;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+}
+
+.badgeArrow {
+  inline-size: 23px;
+  rotate: 225deg;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  transition: rotate 300ms var(--ease-out);
+}
+
+.badgeLink:hover .badgeArrow {
+  rotate: 270deg;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .badgeRing {
+    animation: spin 14s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to { rotate: 360deg; }
+}
+
+@media (min-width: 64.0625rem) {
+  .ctaLayout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .ctaImage,
+  .ctaBox {
+    border-radius: var(--radius-lg);
+  }
+
+  .badge {
+    inline-size: 120px;
+  }
+}

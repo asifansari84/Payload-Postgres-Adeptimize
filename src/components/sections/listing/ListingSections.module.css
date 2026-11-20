@@ -1,0 +1,335 @@
+/* Shared */
+
+.display {
+  color: var(--color-navy);
+  font-size: var(--fs-display);
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
+.display :global(.outline-text) {
+  font-weight: 600;
+}
+
+.center {
+  text-align: center;
+}
+
+/* Intro: text beside expanding images */
+
+.intro {
+  padding-block: var(--section-space) 3rem;
+}
+
+.introLayout {
+  display: grid;
+  gap: 2.5rem;
+}
+
+.introText {
+  display: grid;
+  gap: 1.1rem;
+  justify-items: start;
+  color: var(--color-ink);
+}
+
+.quote {
+  color: var(--color-navy);
+  font-family: var(--font-display);
+  font-size: var(--fs-card-title);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.more {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.more summary {
+  order: 2;
+  justify-self: start;
+  color: var(--color-green-dark);
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+}
+
+.more summary::-webkit-details-marker {
+  display: none;
+}
+
+.more[open] .moreOpen,
+.more:not([open]) .moreClose {
+  display: none;
+}
+
+.accordion {
+  display: flex;
+  gap: 0.4375rem;
+  block-size: 20rem;
+}
+
+.accordionItem {
+  flex: 1 1 0;
+  min-inline-size: 0;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  transition: flex-grow 600ms var(--ease-out);
+}
+
+/* Decorative: the last image is open until another one is hovered. */
+.accordion:not(:hover) .accordionItem:last-child,
+.accordionItem:hover {
+  flex-grow: 4;
+}
+
+.accordionImage {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+@media (min-width: 64rem) {
+  .introLayout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 4rem;
+  }
+
+  .accordion {
+    block-size: 28rem;
+  }
+}
+
+/* Key benefits */
+
+.benefits {
+  --surface: var(--color-navy);
+  padding-block: var(--section-space);
+  background: var(--surface);
+  color: var(--color-white);
+}
+
+.benefits .display {
+  color: var(--color-white);
+}
+
+.benefitsLayout {
+  display: grid;
+  gap: 3rem;
+}
+
+.benefitsIntro {
+  display: grid;
+  gap: 2rem;
+  justify-items: start;
+  align-content: start;
+}
+
+.lightButton {
+  border-color: var(--color-white);
+  color: var(--color-white);
+}
+
+.lightButton:hover {
+  background: var(--color-white);
+  color: var(--color-navy);
+}
+
+.benefitGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 1.5rem;
+}
+
+.benefit {
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+}
+
+.benefitImage {
+  inline-size: 100%;
+  aspect-ratio: 4 / 3;
+  margin-block-end: 0.75rem;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+}
+
+.benefitNumber {
+  color: var(--color-green);
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+.benefit h3 {
+  font-size: var(--fs-card-title);
+}
+
+.benefit p {
+  color: var(--color-muted);
+}
+
+@media (min-width: 64rem) {
+  .benefitsLayout {
+    grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+    gap: 4rem;
+  }
+}
+
+/* Services offered: alternating rows */
+
+.offerings {
+  padding-block: var(--section-space);
+}
+
+.rows {
+  display: grid;
+  gap: clamp(2.5rem, 2rem + 3vw, 5rem);
+  margin-block-start: 3rem;
+}
+
+.offerings .rows:first-child {
+  margin-block-start: 0;
+}
+
+.row {
+  display: grid;
+  gap: 1.75rem;
+  align-items: center;
+}
+
+.rowText {
+  display: grid;
+  gap: 0.75rem;
+  color: var(--color-ink);
+}
+
+.rowNumber {
+  font-family: var(--font-display);
+  font-size: var(--fs-mega);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.rowText h3 {
+  color: var(--color-navy);
+  font-size: var(--fs-card-title);
+  text-transform: uppercase;
+}
+
+.rowImage {
+  inline-size: 100%;
+  max-block-size: 26rem;
+  border-radius: var(--radius-lg);
+  object-fit: cover;
+}
+
+@media (min-width: 64rem) {
+  .row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 5rem;
+  }
+
+  .row:nth-child(even) .rowText {
+    order: 2;
+  }
+}
+
+/* Results */
+
+.results {
+  --surface: var(--color-white);
+  padding-block: var(--section-space);
+  background: var(--surface);
+}
+
+.resultsLayout {
+  display: grid;
+  gap: 3rem;
+}
+
+.resultsIntro {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+  color: var(--color-ink);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: 2rem;
+}
+
+.stat {
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+  padding-block-start: 1.25rem;
+  border-block-start: 1px solid var(--color-muted);
+}
+
+.stat dt {
+  font-family: var(--font-display);
+  font-size: var(--fs-mega);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat dd {
+  margin: 0;
+  color: var(--color-ink);
+}
+
+@media (min-width: 64rem) {
+  .resultsLayout {
+    grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+    gap: 4rem;
+  }
+}
+
+/* Strategy form */
+
+.strategy {
+  padding-block: var(--section-space);
+}
+
+.strategyLayout {
+  display: grid;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.strategyImage {
+  inline-size: 100%;
+  border-radius: var(--radius-lg);
+  object-fit: cover;
+}
+
+.strategyCard {
+  display: grid;
+  gap: 1.25rem;
+  padding: clamp(1.5rem, 1rem + 2vw, 2.75rem);
+  border-radius: var(--radius-lg);
+  background: var(--color-white);
+  box-shadow: 0 1.5rem 3rem -1.5rem rgb(7 54 83 / 0.25);
+}
+
+.strategyText {
+  color: var(--color-ink);
+}
+
+@media (min-width: 64rem) {
+  .strategyLayout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: 4rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accordionItem {
+    transition: none;
+  }
+}

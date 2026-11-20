@@ -1,5 +1,35 @@
 # Payload Blank Template
 
+## Content management
+
+Sign in at `/admin` to open the content workspace. **Posts**, **Pages**, and **Media** appear first, followed by forms, submissions, and account management.
+
+In **Posts**, the **Content** tab holds the featured image and the rich article body. The **SEO** tab previews the search result and controls the canonical URL, robots directives, and social sharing metadata. The public blog lists published posts from Payload. Set `NEXT_PUBLIC_SITE_URL` to the public site origin for canonical and social URLs.
+
+The Next.js frontend uses the staging site’s exported page markup, shared header/footer, and theme stylesheet. Local HTML copies provide a frontend fallback if Payload or the database is unavailable.
+
+After the Postgres schema is ready, use `npm run seed:posts` to import the 11 archived articles and their images. Run the full seed to also import the staging pages and editable contact form:
+
+```bash
+npm run seed:content
+```
+
+For a production database, generate and commit a Payload migration when collection schemas change, then apply migrations during deployment:
+
+```bash
+npm run migrate:create
+npm run migrate
+```
+
+Run `npm run migrate` for a fresh local database as well. Automatic schema pushes are opt-in via `PAYLOAD_DB_PUSH=true` for development databases.
+
+Regenerate Payload’s TypeScript types and admin component map after changing the schema or adding editor components:
+
+```bash
+npm run generate:types
+npm run generate:importmap
+```
+
 This template comes configured with the bare minimum to get started on anything you need.
 
 ## Quick start
@@ -17,7 +47,7 @@ After you click the `Deploy` button above, you'll want to have standalone copy o
 ### Development
 
 1. First [clone the repo](#clone) if you have not done so already
-2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `MONGODB_URL` from your Cloud project to your `.env` if you want to use S3 storage and the MongoDB database that was created for you.
+2. Copy `.env.example` to `.env` and set `DATABASE_URL` to your Postgres connection string. Set a strong `PAYLOAD_SECRET` for authentication.
 
 3. `pnpm install && pnpm dev` to install dependencies and start the dev server
 4. open `http://localhost:3000` to open the app in your browser

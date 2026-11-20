@@ -1,0 +1,322 @@
+/* Shared */
+
+.display {
+  color: var(--color-navy);
+  font-size: var(--fs-display);
+  text-transform: uppercase;
+}
+
+.center {
+  text-align: center;
+}
+
+/* Intro: text beside an image collage with two statistics */
+
+.intro {
+  padding-block: var(--section-space);
+}
+
+.introLayout {
+  display: grid;
+  gap: 3rem;
+  align-items: center;
+}
+
+.introText {
+  display: grid;
+  gap: 1.5rem;
+  justify-items: start;
+}
+
+.lead {
+  max-inline-size: 52ch;
+  color: var(--color-ink);
+}
+
+.collage {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.collageMain,
+.statImage {
+  inline-size: 100%;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+}
+
+.collageMain {
+  aspect-ratio: 4 / 5;
+}
+
+.statImage {
+  aspect-ratio: 16 / 9;
+}
+
+.stat {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.stat figcaption {
+  display: grid;
+  gap: 0.25rem;
+  color: var(--color-ink);
+}
+
+.statValue {
+  color: var(--color-navy);
+  font-family: var(--font-display);
+  font-size: var(--fs-card-num);
+  line-height: 1;
+}
+
+@media (min-width: 48rem) {
+  .collage {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .collageMain {
+    grid-row: span 2;
+    block-size: 100%;
+  }
+}
+
+@media (min-width: 64rem) {
+  .introLayout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: 4rem;
+  }
+}
+
+/* Numbered values */
+
+.values {
+  --surface: var(--color-white);
+  padding-block: var(--section-space);
+  background: var(--surface);
+}
+
+.valuesGrid {
+  display: grid;
+  gap: 2.5rem;
+}
+
+.value {
+  display: grid;
+  gap: 0.75rem;
+  padding-block-start: 1.5rem;
+  border-block-start: 1px solid var(--color-muted);
+}
+
+.valueTitle {
+  color: var(--color-navy);
+  font-size: var(--fs-card-title);
+}
+
+.valueNumber {
+  font-size: var(--fs-card-num);
+}
+
+.value p {
+  color: var(--color-ink);
+}
+
+@media (min-width: 48rem) {
+  .valuesGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 4rem;
+  }
+}
+
+/* Founder */
+
+.founder {
+  padding-block: var(--section-space);
+}
+
+.founderLayout {
+  display: grid;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.founderImage {
+  inline-size: 100%;
+  max-inline-size: 32rem;
+  border-radius: var(--radius-lg);
+  background: var(--color-sky);
+}
+
+.role {
+  margin-block-start: 1rem;
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: var(--fs-card-title);
+  font-weight: 500;
+}
+
+.social {
+  display: flex;
+  gap: 0.75rem;
+  margin-block-start: 1.75rem;
+}
+
+.social a {
+  display: grid;
+  place-items: center;
+  inline-size: 2.75rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--color-navy);
+  color: var(--color-white);
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+.social a:hover {
+  background: var(--color-green);
+  color: var(--color-navy);
+}
+
+.social svg {
+  fill: currentColor;
+}
+
+@media (min-width: 64rem) {
+  .founderLayout {
+    grid-template-columns: minmax(0, 32rem) minmax(0, 1fr);
+    gap: 5rem;
+  }
+}
+
+/* Highlights */
+
+.highlights {
+  --surface: var(--color-navy);
+  padding-block: var(--section-space);
+  background: var(--surface);
+  color: var(--color-white);
+}
+
+.highlights .display {
+  color: var(--color-white);
+}
+
+.highlightGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: 1.5rem;
+  margin-block-start: 3rem;
+}
+
+.highlight {
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+  justify-items: center;
+  padding: 2rem 1.5rem;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.highlight h3 {
+  font-size: var(--fs-card-title);
+}
+
+.highlight p {
+  color: var(--color-muted);
+}
+
+.highlightIcon {
+  inline-size: 4.5rem;
+  block-size: 4.5rem;
+  object-fit: contain;
+}
+
+/* Testimonials */
+
+.testimonials {
+  padding-block: var(--section-space);
+}
+
+.testimonialLayout {
+  display: grid;
+  gap: 3rem;
+  align-items: center;
+}
+
+.testimonialMedia {
+  position: relative;
+}
+
+.testimonialImage {
+  inline-size: 100%;
+  border-radius: var(--radius-lg);
+  object-fit: cover;
+}
+
+.badge {
+  position: absolute;
+  inset-block-end: -1.5rem;
+  inset-inline-end: 1.5rem;
+  inline-size: clamp(4.5rem, 3rem + 5vw, 7rem);
+  border-radius: 50%;
+}
+
+.quotes {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.quotes figure {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 1.75rem;
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+}
+
+.quotes blockquote {
+  margin: 0;
+  color: var(--color-ink);
+}
+
+.quotes figcaption {
+  display: grid;
+}
+
+.quotes strong {
+  color: var(--color-navy);
+  font-family: var(--font-display);
+}
+
+.quotes figcaption span {
+  color: var(--color-ink);
+  font-size: 0.9rem;
+}
+
+.logos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 2rem;
+  align-items: center;
+  justify-items: center;
+  margin-block-start: var(--section-space);
+}
+
+.logo {
+  inline-size: 100%;
+  max-inline-size: 10rem;
+  max-block-size: 4.5rem;
+  object-fit: contain;
+}
+
+@media (min-width: 64rem) {
+  .testimonialLayout {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 4rem;
+  }
+}

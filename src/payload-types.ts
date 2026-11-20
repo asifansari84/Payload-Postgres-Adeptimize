@@ -67,8 +67,14 @@ export interface Config {
   };
   blocks: {};
   collections: {
-    users: User;
+    pages: Page;
+    services: Service;
+    locations: Location;
+    posts: Post;
     media: Media;
+    forms: Form;
+    'contact-submissions': ContactSubmission;
+    users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -76,19 +82,31 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
-    users: UsersSelect<false> | UsersSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
+    services: ServicesSelect<false> | ServicesSelect<true>;
+    locations: LocationsSelect<false> | LocationsSelect<true>;
+    posts: PostsSelect<false> | PostsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    forms: FormsSelect<false> | FormsSelect<true>;
+    'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
+    users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: string;
+    defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    header: Header;
+    footer: Footer;
+  };
+  globalsSelect: {
+    header: HeaderSelect<false> | HeaderSelect<true>;
+    footer: FooterSelect<false> | FooterSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -118,11 +136,1281 @@ export interface UserAuthOperations {
   };
 }
 /**
+ * Home, About Us, Our Services, Location, Blog and Contact Us. Each page has its sections in their own tabs.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: number;
+  title: string;
+  hero?: {
+    subtitle?: string | null;
+    /**
+     * Main homepage headline (shown as the H1). Wrap words in *asterisks* for the outlined style.
+     */
+    headline?: string | null;
+    leftHighlight?: string | null;
+    rightHighlight?: string | null;
+    image?: (number | null) | Media;
+  };
+  trust?: {
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    body?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    link?: {
+      type?: ('page' | 'custom') | null;
+      newTab?: boolean | null;
+      label?: string | null;
+      page?: (number | null) | Page;
+      url?: string | null;
+    };
+    logos?:
+      | {
+          logo: number | Media;
+          /**
+           * Opens in a new tab.
+           */
+          url?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  problems?: {
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    items?:
+      | {
+          title: string;
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  framework?: {
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    /**
+     * The first half of the steps sit left of the image, the rest on the right.
+     */
+    steps?:
+      | {
+          title: string;
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+    image?: (number | null) | Media;
+    /**
+     * Optional small image floating over the main one.
+     */
+    accentImage?: (number | null) | Media;
+  };
+  differentiators?: {
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    items?:
+      | {
+          title: string;
+          body: {
+            root: {
+              type: string;
+              children: {
+                type: any;
+                version: number;
+                [k: string]: unknown;
+              }[];
+              direction: ('ltr' | 'rtl') | null;
+              format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+              indent: number;
+              version: number;
+            };
+            [k: string]: unknown;
+          };
+          image: number | Media;
+          thumbnail?: (number | null) | Media;
+          /**
+           * Optional label on the corner of the main image.
+           */
+          tag?: string | null;
+          /**
+           * Short line shown under the thumbnail.
+           */
+          note?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  challenges?: {
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    /**
+     * The last image starts open; the others expand on hover.
+     */
+    images?:
+      | {
+          image: number | Media;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  solutions?: {
+    /**
+     * Optional. Wrap words in *asterisks* for the outlined style.
+     */
+    heading?: string | null;
+    /**
+     * Cards are numbered automatically.
+     */
+    items?:
+      | {
+          title: string;
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  testimonials?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    aside?: string | null;
+    items?:
+      | {
+          /**
+           * Portrait of the client. A landscape crop around 4:3 works best.
+           */
+          photo?: (number | null) | Media;
+          quote: string;
+          name: string;
+          company?: string | null;
+          rating?: number | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  services?: {
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    services?:
+      | {
+          title: string;
+          image?: (number | null) | Media;
+          link?: {
+            type?: ('page' | 'custom') | null;
+            newTab?: boolean | null;
+            page?: (number | null) | Page;
+            url?: string | null;
+          };
+          id?: string | null;
+        }[]
+      | null;
+  };
+  partners?: {
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    text?: string | null;
+    logos?:
+      | {
+          logo: number | Media;
+          name: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  faq?: {
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    items?:
+      | {
+          question: string;
+          answer: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  aboutHeader?: {
+    /**
+     * Optional large outlined word behind the title.
+     */
+    eyebrow?: string | null;
+    /**
+     * Shown as the page H1.
+     */
+    title?: string | null;
+  };
+  aboutIntro?: {
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    text?: string | null;
+    button?: {
+      type?: ('page' | 'custom') | null;
+      newTab?: boolean | null;
+      label?: string | null;
+      page?: (number | null) | Page;
+      url?: string | null;
+    };
+    /**
+     * Large image on the left of the collage.
+     */
+    image?: (number | null) | Media;
+    stats?:
+      | {
+          value: string;
+          image?: (number | null) | Media;
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  aboutValues?: {
+    /**
+     * Numbered automatically.
+     */
+    items?:
+      | {
+          title: string;
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  aboutFounder?: {
+    /**
+     * For example “Meet *Mohit*”. Wrap words in *asterisks* for the outlined style.
+     */
+    heading?: string | null;
+    role?: string | null;
+    image?: (number | null) | Media;
+    social?:
+      | {
+          platform: 'linkedin' | 'facebook' | 'instagram' | 'x' | 'youtube' | 'behance';
+          url: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  aboutHighlights?: {
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    items?:
+      | {
+          icon?: (number | null) | Media;
+          title: string;
+          text?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  aboutTestimonials?: {
+    image?: (number | null) | Media;
+    /**
+     * Small round image over the photo.
+     */
+    badge?: (number | null) | Media;
+    items?:
+      | {
+          quote: string;
+          name: string;
+          company?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    logos?:
+      | {
+          logo: number | Media;
+          /**
+           * Opens in a new tab.
+           */
+          url?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  contactHeader?: {
+    /**
+     * Optional large outlined word behind the title.
+     */
+    eyebrow?: string | null;
+    /**
+     * Shown as the page H1.
+     */
+    title?: string | null;
+  };
+  contactIntro?: {
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    subheading?: string | null;
+    /**
+     * Leave an empty line between paragraphs.
+     */
+    text?: string | null;
+    /**
+     * Defaults to the “contact” form.
+     */
+    form?: (number | null) | Form;
+  };
+  contactDetails?: {
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    address?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    hoursHeading?: string | null;
+    /**
+     * One line per row.
+     */
+    hours?: string | null;
+    note?: string | null;
+    showMap?: boolean | null;
+    /**
+     * Address or place name to pin. Leave empty to use the address above.
+     */
+    mapLocation?: string | null;
+  };
+  contactExpect?: {
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    /**
+     * Numbered automatically.
+     */
+    items?:
+      | {
+          title: string;
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  contactCta?: {
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    text?: string | null;
+    image?: (number | null) | Media;
+  };
+  blogHeader?: {
+    /**
+     * Optional large outlined word behind the title.
+     */
+    eyebrow?: string | null;
+    /**
+     * Shown as the page H1.
+     */
+    title?: string | null;
+    /**
+     * Optional line under the title.
+     */
+    intro?: string | null;
+  };
+  servicesHeader?: {
+    /**
+     * Shown as the page H1.
+     */
+    title?: string | null;
+    intro?: string | null;
+    image?: (number | null) | Media;
+  };
+  servicesIntro?: {
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    text?: string | null;
+    counters?:
+      | {
+          value: number;
+          suffix?: string | null;
+          label: string;
+          text?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  servicesSlider?: {
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+  };
+  servicesCta?: {
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    badgeText?: string | null;
+    link?: {
+      type?: ('page' | 'custom') | null;
+      newTab?: boolean | null;
+      page?: (number | null) | Page;
+      url?: string | null;
+    };
+    image?: (number | null) | Media;
+    /**
+     * Optional background pattern for the box.
+     */
+    background?: (number | null) | Media;
+  };
+  locationsHeader?: {
+    title?: string | null;
+  };
+  locationsSlider?: {
+    interval?: number | null;
+  };
+  /**
+   * Add, reorder and edit the sections of this page. Drag sections to change their order.
+   */
+  layout?:
+    | (
+        | HeroBlock
+        | LogoShowcaseBlock
+        | FeatureGridBlock
+        | ProcessBlock
+        | DifferentiatorsBlock
+        | ImageAccordionBlock
+        | TestimonialsBlock
+        | ServiceCarouselBlock
+        | LogoStripBlock
+        | FAQBlock
+      )[]
+    | null;
+  seo?: {
+    /**
+     * Aim for about 60 characters. Defaults to the page title.
+     */
+    title?: string | null;
+    /**
+     * Aim for about 160 characters.
+     */
+    description?: string | null;
+    noIndex?: boolean | null;
+  };
+  /**
+   * The page address, e.g. "about-us" or "contact-us". Use "home" for the homepage.
+   */
+  slug: string;
+  status: 'draft' | 'published';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  alt: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * Manage the fields and confirmation text for website forms.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "forms".
+ */
+export interface Form {
+  id: number;
+  title: string;
+  slug: string;
+  status: 'draft' | 'published';
+  fields: {
+    /**
+     * Used as the submitted field key.
+     */
+    name: string;
+    label: string;
+    type: 'text' | 'email' | 'tel' | 'textarea';
+    required?: boolean | null;
+    id?: string | null;
+  }[];
+  submitLabel?: string | null;
+  successMessage?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroBlock".
+ */
+export interface HeroBlock {
+  /**
+   * Main page headline (shown as the H1). Wrap words in *asterisks* for the outlined style.
+   */
+  title: string;
+  subtitle?: string | null;
+  leftHighlight?: string | null;
+  rightHighlight?: string | null;
+  image: number | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'hero';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LogoShowcaseBlock".
+ */
+export interface LogoShowcaseBlock {
+  /**
+   * Wrap words in *asterisks* to show them in the outlined accent style.
+   */
+  heading: string;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  link?: {
+    type?: ('page' | 'custom') | null;
+    newTab?: boolean | null;
+    label?: string | null;
+    page?: (number | null) | Page;
+    url?: string | null;
+  };
+  logos?:
+    | {
+        logo: number | Media;
+        /**
+         * Company name, used as the image description.
+         */
+        name: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'logoShowcase';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeatureGridBlock".
+ */
+export interface FeatureGridBlock {
+  /**
+   * Optional. Wrap words in *asterisks* for the outlined style.
+   */
+  heading?: string | null;
+  /**
+   * Cards are numbered automatically.
+   */
+  items: {
+    title: string;
+    text: string;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'featureGrid';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProcessBlock".
+ */
+export interface ProcessBlock {
+  /**
+   * Wrap words in *asterisks* to show them in the outlined accent style.
+   */
+  heading: string;
+  /**
+   * The first half of the steps sit left of the image, the rest on the right.
+   */
+  steps: {
+    title: string;
+    text: string;
+    id?: string | null;
+  }[];
+  image: number | Media;
+  /**
+   * Optional small image floating over the main one.
+   */
+  accentImage?: (number | null) | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'process';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DifferentiatorsBlock".
+ */
+export interface DifferentiatorsBlock {
+  /**
+   * Wrap words in *asterisks* to show them in the outlined accent style.
+   */
+  heading: string;
+  items: {
+    title: string;
+    body: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
+    image: number | Media;
+    thumbnail?: (number | null) | Media;
+    /**
+     * Optional label on the corner of the main image.
+     */
+    tag?: string | null;
+    /**
+     * Short line shown under the thumbnail.
+     */
+    note?: string | null;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'differentiators';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ImageAccordionBlock".
+ */
+export interface ImageAccordionBlock {
+  /**
+   * Wrap words in *asterisks* to show them in the outlined accent style.
+   */
+  heading: string;
+  /**
+   * The last image starts open; the others expand on hover.
+   */
+  images: {
+    image: number | Media;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'imageAccordion';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialsBlock".
+ */
+export interface TestimonialsBlock {
+  eyebrow?: string | null;
+  title: string;
+  aside?: string | null;
+  items: {
+    /**
+     * Portrait of the client. A landscape crop around 4:3 works best.
+     */
+    photo?: (number | null) | Media;
+    quote: string;
+    name: string;
+    company?: string | null;
+    rating?: number | null;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'testimonials';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ServiceCarouselBlock".
+ */
+export interface ServiceCarouselBlock {
+  /**
+   * Wrap words in *asterisks* to show them in the outlined accent style.
+   */
+  heading: string;
+  services: {
+    title: string;
+    image?: (number | null) | Media;
+    link?: {
+      type?: ('page' | 'custom') | null;
+      newTab?: boolean | null;
+      page?: (number | null) | Page;
+      url?: string | null;
+    };
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'serviceCarousel';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LogoStripBlock".
+ */
+export interface LogoStripBlock {
+  /**
+   * Wrap words in *asterisks* to show them in the outlined accent style.
+   */
+  heading: string;
+  text?: string | null;
+  logos?:
+    | {
+        logo: number | Media;
+        name: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'logoStrip';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FAQBlock".
+ */
+export interface FAQBlock {
+  /**
+   * Wrap words in *asterisks* to show them in the outlined accent style.
+   */
+  heading: string;
+  items: {
+    question: string;
+    answer: string;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'faq';
+}
+/**
+ * Each service gets its own page at /service-item/<slug>/ and is listed on the Our Services page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services".
+ */
+export interface Service {
+  id: number;
+  title: string;
+  banner?: {
+    /**
+     * Shown as the page H1. Defaults to the name above.
+     */
+    title?: string | null;
+    intro?: string | null;
+    /**
+     * Wide image under the title.
+     */
+    image?: (number | null) | Media;
+  };
+  intro?: {
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    /**
+     * Optional tagline shown in bold above the text.
+     */
+    quote?: string | null;
+    /**
+     * Leave an empty line between paragraphs. Only the first paragraph shows until “Read more” is clicked.
+     */
+    text?: string | null;
+    button?: {
+      type?: ('page' | 'custom') | null;
+      newTab?: boolean | null;
+      label?: string | null;
+      page?: (number | null) | Page;
+      url?: string | null;
+    };
+    /**
+     * The last image starts open; the others expand on hover.
+     */
+    images?:
+      | {
+          image: number | Media;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  highlights?: {
+    /**
+     * Optional.
+     */
+    heading?: string | null;
+    /**
+     * Numbered automatically.
+     */
+    items?:
+      | {
+          title: string;
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  spotlight?: {
+    image?: (number | null) | Media;
+    /**
+     * Small round image over the photo.
+     */
+    badge?: (number | null) | Media;
+    items?:
+      | {
+          quote: string;
+          name: string;
+          company?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  benefits?: {
+    /**
+     * For example “Our Key *Benefits*”.
+     */
+    heading?: string | null;
+    button?: {
+      type?: ('page' | 'custom') | null;
+      newTab?: boolean | null;
+      label?: string | null;
+      page?: (number | null) | Page;
+      url?: string | null;
+    };
+    /**
+     * Numbered automatically.
+     */
+    items?:
+      | {
+          title: string;
+          text: string;
+          image?: (number | null) | Media;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  process?: {
+    /**
+     * Optional.
+     */
+    heading?: string | null;
+    /**
+     * The first half of the steps sit left of the image, the rest on the right.
+     */
+    steps?:
+      | {
+          title: string;
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+    image?: (number | null) | Media;
+    /**
+     * Optional small image floating over the main one.
+     */
+    accentImage?: (number | null) | Media;
+  };
+  faq?: {
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    items?:
+      | {
+          question: string;
+          answer: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  moreServices?: {
+    show?: boolean | null;
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+  };
+  strategy?: {
+    show?: boolean | null;
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    text?: string | null;
+    image?: (number | null) | Media;
+  };
+  /**
+   * A sentence or two shown on the card.
+   */
+  summary?: string | null;
+  cardImage?: (number | null) | Media;
+  seo?: {
+    /**
+     * Aim for about 60 characters. Defaults to the name.
+     */
+    title?: string | null;
+    /**
+     * Aim for about 160 characters.
+     */
+    description?: string | null;
+    noIndex?: boolean | null;
+  };
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  status: 'draft' | 'published';
+  /**
+   * Lower numbers are listed first.
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Each location gets its own page at /location-<slug>/ and is listed on the Location page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "locations".
+ */
+export interface Location {
+  id: number;
+  title: string;
+  banner?: {
+    /**
+     * Shown as the page H1. Defaults to the name above.
+     */
+    title?: string | null;
+    intro?: string | null;
+    /**
+     * Wide image under the title.
+     */
+    image?: (number | null) | Media;
+  };
+  intro?: {
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    /**
+     * Optional tagline shown in bold above the text.
+     */
+    quote?: string | null;
+    /**
+     * Leave an empty line between paragraphs. Only the first paragraph shows until “Read more” is clicked.
+     */
+    text?: string | null;
+    button?: {
+      type?: ('page' | 'custom') | null;
+      newTab?: boolean | null;
+      label?: string | null;
+      page?: (number | null) | Page;
+      url?: string | null;
+    };
+    /**
+     * The last image starts open; the others expand on hover.
+     */
+    images?:
+      | {
+          image: number | Media;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  highlights?: {
+    /**
+     * Optional.
+     */
+    heading?: string | null;
+    /**
+     * Numbered automatically.
+     */
+    items?:
+      | {
+          title: string;
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  offerings?: {
+    /**
+     * Optional.
+     */
+    heading?: string | null;
+    /**
+     * Numbered automatically.
+     */
+    items?:
+      | {
+          title: string;
+          text: string;
+          image?: (number | null) | Media;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  results?: {
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    text?: string | null;
+    stats?:
+      | {
+          value: string;
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  moreServices?: {
+    show?: boolean | null;
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+  };
+  testimonials?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    aside?: string | null;
+    items?:
+      | {
+          photo?: (number | null) | Media;
+          quote: string;
+          name: string;
+          company?: string | null;
+          rating?: number | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  faq?: {
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    items?:
+      | {
+          question: string;
+          answer: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  strategy?: {
+    show?: boolean | null;
+    /**
+     * Wrap words in *asterisks* to show them in the outlined accent style.
+     */
+    heading?: string | null;
+    text?: string | null;
+    image?: (number | null) | Media;
+  };
+  /**
+   * A sentence or two shown on the card.
+   */
+  summary?: string | null;
+  cardImage?: (number | null) | Media;
+  /**
+   * Full-screen image in the slider on the Location page.
+   */
+  slideImage?: (number | null) | Media;
+  /**
+   * Small animated icon beside the title in the slider.
+   */
+  slideIcon?: (number | null) | Media;
+  slideIconAnimation?: ('hang' | 'pulse' | 'spin') | null;
+  seo?: {
+    /**
+     * Aim for about 60 characters. Defaults to the name.
+     */
+    title?: string | null;
+    /**
+     * Aim for about 160 characters.
+     */
+    description?: string | null;
+    noIndex?: boolean | null;
+  };
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  status: 'draft' | 'published';
+  /**
+   * Lower numbers are listed first.
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Write and publish blog posts, and control how they appear in search and social shares.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: number;
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  /**
+   * Short summary for the blog listing and the default search description.
+   */
+  excerpt: string;
+  /**
+   * Shown on the article, blog listing, and social previews by default.
+   */
+  featuredImage?: (number | null) | Media;
+  richContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  seo?: {
+    /**
+     * Aim for about 60 characters. Defaults to the post title.
+     */
+    title?: string | null;
+    /**
+     * Aim for about 160 characters. Defaults to the excerpt.
+     */
+    description?: string | null;
+    /**
+     * Use an absolute URL only when a different page should be treated as the original.
+     */
+    canonicalURL?: string | null;
+    noIndex?: boolean | null;
+    noFollow?: boolean | null;
+    /**
+     * Optional override for the search title when shared.
+     */
+    socialTitle?: string | null;
+    /**
+     * Optional override for the search description when shared.
+     */
+    socialDescription?: string | null;
+    /**
+     * Defaults to the featured image. An image around 1200 × 630 px works well.
+     */
+    socialImage?: (number | null) | Media;
+  };
+  /**
+   * Text used by older posts without a rich article body.
+   */
+  content?: string | null;
+  /**
+   * Older imported markup. Rich article content takes precedence when present.
+   */
+  sourceHtml?: string | null;
+  status: 'draft' | 'published';
+  author?: string | null;
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Contact messages and newsletter signups submitted through the website.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-submissions".
+ */
+export interface ContactSubmission {
+  id: number;
+  formSlug: string;
+  name?: string | null;
+  email?: string | null;
+  company?: string | null;
+  phone?: string | null;
+  message?: string | null;
+  submissionData:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  status: 'new' | 'in-progress' | 'resolved';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
-  id: string;
+  id: number;
+  name: string;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -145,29 +1433,10 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: string;
-  alt: string;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: string;
+  id: number;
   key: string;
   data:
     | {
@@ -184,20 +1453,44 @@ export interface PayloadKv {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string;
+  id: number;
   document?:
     | ({
-        relationTo: 'users';
-        value: string | User;
+        relationTo: 'pages';
+        value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'services';
+        value: number | Service;
+      } | null)
+    | ({
+        relationTo: 'locations';
+        value: number | Location;
+      } | null)
+    | ({
+        relationTo: 'posts';
+        value: number | Post;
       } | null)
     | ({
         relationTo: 'media';
-        value: string | Media;
+        value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'forms';
+        value: number | Form;
+      } | null)
+    | ({
+        relationTo: 'contact-submissions';
+        value: number | ContactSubmission;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: number | User;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -207,10 +1500,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string;
+  id: number;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   key?: string | null;
   value?:
@@ -230,7 +1523,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string;
+  id: number;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -238,26 +1531,879 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users_select".
+ * via the `definition` "pages_select".
  */
-export interface UsersSelect<T extends boolean = true> {
-  updatedAt?: T;
-  createdAt?: T;
-  email?: T;
-  resetPasswordToken?: T;
-  resetPasswordExpiration?: T;
-  salt?: T;
-  hash?: T;
-  resetPasswordRequestedAt?: T;
-  loginAttempts?: T;
-  lockUntil?: T;
-  sessions?:
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  hero?:
     | T
     | {
-        id?: T;
-        createdAt?: T;
-        expiresAt?: T;
+        subtitle?: T;
+        headline?: T;
+        leftHighlight?: T;
+        rightHighlight?: T;
+        image?: T;
       };
+  trust?:
+    | T
+    | {
+        heading?: T;
+        body?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              label?: T;
+              page?: T;
+              url?: T;
+            };
+        logos?:
+          | T
+          | {
+              logo?: T;
+              url?: T;
+              id?: T;
+            };
+      };
+  problems?:
+    | T
+    | {
+        heading?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              id?: T;
+            };
+      };
+  framework?:
+    | T
+    | {
+        heading?: T;
+        steps?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              id?: T;
+            };
+        image?: T;
+        accentImage?: T;
+      };
+  differentiators?:
+    | T
+    | {
+        heading?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+              image?: T;
+              thumbnail?: T;
+              tag?: T;
+              note?: T;
+              id?: T;
+            };
+      };
+  challenges?:
+    | T
+    | {
+        heading?: T;
+        images?:
+          | T
+          | {
+              image?: T;
+              id?: T;
+            };
+      };
+  solutions?:
+    | T
+    | {
+        heading?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              id?: T;
+            };
+      };
+  testimonials?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        aside?: T;
+        items?:
+          | T
+          | {
+              photo?: T;
+              quote?: T;
+              name?: T;
+              company?: T;
+              rating?: T;
+              id?: T;
+            };
+      };
+  services?:
+    | T
+    | {
+        heading?: T;
+        services?:
+          | T
+          | {
+              title?: T;
+              image?: T;
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    page?: T;
+                    url?: T;
+                  };
+              id?: T;
+            };
+      };
+  partners?:
+    | T
+    | {
+        heading?: T;
+        text?: T;
+        logos?:
+          | T
+          | {
+              logo?: T;
+              name?: T;
+              id?: T;
+            };
+      };
+  faq?:
+    | T
+    | {
+        heading?: T;
+        items?:
+          | T
+          | {
+              question?: T;
+              answer?: T;
+              id?: T;
+            };
+      };
+  aboutHeader?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+      };
+  aboutIntro?:
+    | T
+    | {
+        heading?: T;
+        text?: T;
+        button?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              label?: T;
+              page?: T;
+              url?: T;
+            };
+        image?: T;
+        stats?:
+          | T
+          | {
+              value?: T;
+              image?: T;
+              text?: T;
+              id?: T;
+            };
+      };
+  aboutValues?:
+    | T
+    | {
+        items?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              id?: T;
+            };
+      };
+  aboutFounder?:
+    | T
+    | {
+        heading?: T;
+        role?: T;
+        image?: T;
+        social?:
+          | T
+          | {
+              platform?: T;
+              url?: T;
+              id?: T;
+            };
+      };
+  aboutHighlights?:
+    | T
+    | {
+        heading?: T;
+        items?:
+          | T
+          | {
+              icon?: T;
+              title?: T;
+              text?: T;
+              id?: T;
+            };
+      };
+  aboutTestimonials?:
+    | T
+    | {
+        image?: T;
+        badge?: T;
+        items?:
+          | T
+          | {
+              quote?: T;
+              name?: T;
+              company?: T;
+              id?: T;
+            };
+        logos?:
+          | T
+          | {
+              logo?: T;
+              url?: T;
+              id?: T;
+            };
+      };
+  contactHeader?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+      };
+  contactIntro?:
+    | T
+    | {
+        heading?: T;
+        subheading?: T;
+        text?: T;
+        form?: T;
+      };
+  contactDetails?:
+    | T
+    | {
+        heading?: T;
+        address?: T;
+        email?: T;
+        phone?: T;
+        hoursHeading?: T;
+        hours?: T;
+        note?: T;
+        showMap?: T;
+        mapLocation?: T;
+      };
+  contactExpect?:
+    | T
+    | {
+        heading?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              id?: T;
+            };
+      };
+  contactCta?:
+    | T
+    | {
+        heading?: T;
+        text?: T;
+        image?: T;
+      };
+  blogHeader?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        intro?: T;
+      };
+  servicesHeader?:
+    | T
+    | {
+        title?: T;
+        intro?: T;
+        image?: T;
+      };
+  servicesIntro?:
+    | T
+    | {
+        heading?: T;
+        text?: T;
+        counters?:
+          | T
+          | {
+              value?: T;
+              suffix?: T;
+              label?: T;
+              text?: T;
+              id?: T;
+            };
+      };
+  servicesSlider?:
+    | T
+    | {
+        heading?: T;
+      };
+  servicesCta?:
+    | T
+    | {
+        heading?: T;
+        badgeText?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              page?: T;
+              url?: T;
+            };
+        image?: T;
+        background?: T;
+      };
+  locationsHeader?:
+    | T
+    | {
+        title?: T;
+      };
+  locationsSlider?:
+    | T
+    | {
+        interval?: T;
+      };
+  layout?:
+    | T
+    | {
+        hero?: T | HeroBlockSelect<T>;
+        logoShowcase?: T | LogoShowcaseBlockSelect<T>;
+        featureGrid?: T | FeatureGridBlockSelect<T>;
+        process?: T | ProcessBlockSelect<T>;
+        differentiators?: T | DifferentiatorsBlockSelect<T>;
+        imageAccordion?: T | ImageAccordionBlockSelect<T>;
+        testimonials?: T | TestimonialsBlockSelect<T>;
+        serviceCarousel?: T | ServiceCarouselBlockSelect<T>;
+        logoStrip?: T | LogoStripBlockSelect<T>;
+        faq?: T | FAQBlockSelect<T>;
+      };
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        noIndex?: T;
+      };
+  slug?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroBlock_select".
+ */
+export interface HeroBlockSelect<T extends boolean = true> {
+  title?: T;
+  subtitle?: T;
+  leftHighlight?: T;
+  rightHighlight?: T;
+  image?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LogoShowcaseBlock_select".
+ */
+export interface LogoShowcaseBlockSelect<T extends boolean = true> {
+  heading?: T;
+  body?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        label?: T;
+        page?: T;
+        url?: T;
+      };
+  logos?:
+    | T
+    | {
+        logo?: T;
+        name?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeatureGridBlock_select".
+ */
+export interface FeatureGridBlockSelect<T extends boolean = true> {
+  heading?: T;
+  items?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProcessBlock_select".
+ */
+export interface ProcessBlockSelect<T extends boolean = true> {
+  heading?: T;
+  steps?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  image?: T;
+  accentImage?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DifferentiatorsBlock_select".
+ */
+export interface DifferentiatorsBlockSelect<T extends boolean = true> {
+  heading?: T;
+  items?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        image?: T;
+        thumbnail?: T;
+        tag?: T;
+        note?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ImageAccordionBlock_select".
+ */
+export interface ImageAccordionBlockSelect<T extends boolean = true> {
+  heading?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialsBlock_select".
+ */
+export interface TestimonialsBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  aside?: T;
+  items?:
+    | T
+    | {
+        photo?: T;
+        quote?: T;
+        name?: T;
+        company?: T;
+        rating?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ServiceCarouselBlock_select".
+ */
+export interface ServiceCarouselBlockSelect<T extends boolean = true> {
+  heading?: T;
+  services?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              page?: T;
+              url?: T;
+            };
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LogoStripBlock_select".
+ */
+export interface LogoStripBlockSelect<T extends boolean = true> {
+  heading?: T;
+  text?: T;
+  logos?:
+    | T
+    | {
+        logo?: T;
+        name?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FAQBlock_select".
+ */
+export interface FAQBlockSelect<T extends boolean = true> {
+  heading?: T;
+  items?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services_select".
+ */
+export interface ServicesSelect<T extends boolean = true> {
+  title?: T;
+  banner?:
+    | T
+    | {
+        title?: T;
+        intro?: T;
+        image?: T;
+      };
+  intro?:
+    | T
+    | {
+        heading?: T;
+        quote?: T;
+        text?: T;
+        button?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              label?: T;
+              page?: T;
+              url?: T;
+            };
+        images?:
+          | T
+          | {
+              image?: T;
+              id?: T;
+            };
+      };
+  highlights?:
+    | T
+    | {
+        heading?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              id?: T;
+            };
+      };
+  spotlight?:
+    | T
+    | {
+        image?: T;
+        badge?: T;
+        items?:
+          | T
+          | {
+              quote?: T;
+              name?: T;
+              company?: T;
+              id?: T;
+            };
+      };
+  benefits?:
+    | T
+    | {
+        heading?: T;
+        button?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              label?: T;
+              page?: T;
+              url?: T;
+            };
+        items?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              image?: T;
+              id?: T;
+            };
+      };
+  process?:
+    | T
+    | {
+        heading?: T;
+        steps?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              id?: T;
+            };
+        image?: T;
+        accentImage?: T;
+      };
+  faq?:
+    | T
+    | {
+        heading?: T;
+        items?:
+          | T
+          | {
+              question?: T;
+              answer?: T;
+              id?: T;
+            };
+      };
+  moreServices?:
+    | T
+    | {
+        show?: T;
+        heading?: T;
+      };
+  strategy?:
+    | T
+    | {
+        show?: T;
+        heading?: T;
+        text?: T;
+        image?: T;
+      };
+  summary?: T;
+  cardImage?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        noIndex?: T;
+      };
+  generateSlug?: T;
+  slug?: T;
+  status?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "locations_select".
+ */
+export interface LocationsSelect<T extends boolean = true> {
+  title?: T;
+  banner?:
+    | T
+    | {
+        title?: T;
+        intro?: T;
+        image?: T;
+      };
+  intro?:
+    | T
+    | {
+        heading?: T;
+        quote?: T;
+        text?: T;
+        button?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              label?: T;
+              page?: T;
+              url?: T;
+            };
+        images?:
+          | T
+          | {
+              image?: T;
+              id?: T;
+            };
+      };
+  highlights?:
+    | T
+    | {
+        heading?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              id?: T;
+            };
+      };
+  offerings?:
+    | T
+    | {
+        heading?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              image?: T;
+              id?: T;
+            };
+      };
+  results?:
+    | T
+    | {
+        heading?: T;
+        text?: T;
+        stats?:
+          | T
+          | {
+              value?: T;
+              text?: T;
+              id?: T;
+            };
+      };
+  moreServices?:
+    | T
+    | {
+        show?: T;
+        heading?: T;
+      };
+  testimonials?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        aside?: T;
+        items?:
+          | T
+          | {
+              photo?: T;
+              quote?: T;
+              name?: T;
+              company?: T;
+              rating?: T;
+              id?: T;
+            };
+      };
+  faq?:
+    | T
+    | {
+        heading?: T;
+        items?:
+          | T
+          | {
+              question?: T;
+              answer?: T;
+              id?: T;
+            };
+      };
+  strategy?:
+    | T
+    | {
+        show?: T;
+        heading?: T;
+        text?: T;
+        image?: T;
+      };
+  summary?: T;
+  cardImage?: T;
+  slideImage?: T;
+  slideIcon?: T;
+  slideIconAnimation?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        noIndex?: T;
+      };
+  generateSlug?: T;
+  slug?: T;
+  status?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts_select".
+ */
+export interface PostsSelect<T extends boolean = true> {
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
+  excerpt?: T;
+  featuredImage?: T;
+  richContent?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        canonicalURL?: T;
+        noIndex?: T;
+        noFollow?: T;
+        socialTitle?: T;
+        socialDescription?: T;
+        socialImage?: T;
+      };
+  content?: T;
+  sourceHtml?: T;
+  status?: T;
+  author?: T;
+  publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -276,6 +2422,68 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "forms_select".
+ */
+export interface FormsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  status?: T;
+  fields?:
+    | T
+    | {
+        name?: T;
+        label?: T;
+        type?: T;
+        required?: T;
+        id?: T;
+      };
+  submitLabel?: T;
+  successMessage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-submissions_select".
+ */
+export interface ContactSubmissionsSelect<T extends boolean = true> {
+  formSlug?: T;
+  name?: T;
+  email?: T;
+  company?: T;
+  phone?: T;
+  message?: T;
+  submissionData?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users_select".
+ */
+export interface UsersSelect<T extends boolean = true> {
+  name?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  resetPasswordRequestedAt?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -316,6 +2524,271 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * Logo, header buttons and the full-screen menu shown on every page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header".
+ */
+export interface Header {
+  id: number;
+  /**
+   * Shown on light backgrounds. SVG works best.
+   */
+  logo?: (number | null) | Media;
+  /**
+   * Outlined buttons beside the menu icon (hidden on small screens).
+   */
+  buttons?:
+    | {
+        link: {
+          type?: ('page' | 'custom') | null;
+          newTab?: boolean | null;
+          label: string;
+          page?: (number | null) | Page;
+          url?: string | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  menu?:
+    | {
+        link: {
+          type?: ('page' | 'custom') | null;
+          newTab?: boolean | null;
+          label: string;
+          page?: (number | null) | Page;
+          url?: string | null;
+        };
+        /**
+         * Optional. When added, the item opens a drop-down instead of linking directly.
+         */
+        children?:
+          | {
+              link: {
+                type?: ('page' | 'custom') | null;
+                newTab?: boolean | null;
+                label: string;
+                page?: (number | null) | Page;
+                url?: string | null;
+              };
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Shown on the dark menu. Use a light logo.
+   */
+  menuLogo?: (number | null) | Media;
+  phone?: string | null;
+  email?: string | null;
+  menuImage1?: (number | null) | Media;
+  menuImage2?: (number | null) | Media;
+  chat?: {
+    title?: string | null;
+    text?: string | null;
+    /**
+     * Opens in a new tab. Leave empty to show the text without a link.
+     */
+    url?: string | null;
+  };
+  social?:
+    | {
+        platform: 'facebook' | 'linkedin' | 'instagram' | 'x' | 'youtube' | 'behance';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The call to action, link columns and contact details at the bottom of every page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer".
+ */
+export interface Footer {
+  id: number;
+  /**
+   * Shown on the dark footer. Use a light logo.
+   */
+  logo?: (number | null) | Media;
+  ctaEyebrow?: string | null;
+  ctaTitle?: string | null;
+  ctaAside?: string | null;
+  text?: string | null;
+  social?:
+    | {
+        platform: 'facebook' | 'linkedin' | 'instagram' | 'x' | 'youtube' | 'behance';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  columns?:
+    | {
+        title: string;
+        links?:
+          | {
+              link: {
+                type?: ('page' | 'custom') | null;
+                newTab?: boolean | null;
+                label: string;
+                page?: (number | null) | Page;
+                url?: string | null;
+              };
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  hoursTitle?: string | null;
+  hours?:
+    | {
+        line: string;
+        id?: string | null;
+      }[]
+    | null;
+  contactTitle?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  newsletterTitle?: string | null;
+  newsletterPlaceholder?: string | null;
+  /**
+   * {year} is replaced with the current year.
+   */
+  copyright?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header_select".
+ */
+export interface HeaderSelect<T extends boolean = true> {
+  logo?: T;
+  buttons?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              label?: T;
+              page?: T;
+              url?: T;
+            };
+        id?: T;
+      };
+  menu?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              label?: T;
+              page?: T;
+              url?: T;
+            };
+        children?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    label?: T;
+                    page?: T;
+                    url?: T;
+                  };
+              id?: T;
+            };
+        id?: T;
+      };
+  menuLogo?: T;
+  phone?: T;
+  email?: T;
+  menuImage1?: T;
+  menuImage2?: T;
+  chat?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        url?: T;
+      };
+  social?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer_select".
+ */
+export interface FooterSelect<T extends boolean = true> {
+  logo?: T;
+  ctaEyebrow?: T;
+  ctaTitle?: T;
+  ctaAside?: T;
+  text?: T;
+  social?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  columns?:
+    | T
+    | {
+        title?: T;
+        links?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    label?: T;
+                    page?: T;
+                    url?: T;
+                  };
+              id?: T;
+            };
+        id?: T;
+      };
+  hoursTitle?: T;
+  hours?:
+    | T
+    | {
+        line?: T;
+        id?: T;
+      };
+  contactTitle?: T;
+  email?: T;
+  phone?: T;
+  newsletterTitle?: T;
+  newsletterPlaceholder?: T;
+  copyright?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

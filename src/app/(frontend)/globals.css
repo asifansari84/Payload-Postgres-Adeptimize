@@ -1,0 +1,261 @@
+/*
+ * Site-wide foundation: design tokens, a light reset, base typography and a
+ * handful of shared utilities. Component styles live next to their
+ * components as CSS Modules, so nothing here should target a specific section.
+ */
+
+@layer reset, tokens, base, utilities;
+
+@layer tokens {
+  :root {
+    /* Brand palette */
+    --color-navy: #073653;
+    --color-ocean: #0e4b71;
+    --color-ink: #153451;
+    --color-green: #4fe18a;
+    --color-green-dark: #368d59;
+    --color-surface: #f2f9fe;
+    --color-sky: #e5f4fd;
+    --color-white: #fff;
+    --color-text: #000;
+    --color-muted: #ccc;
+    --color-subtle: #aaa;
+
+    /* Fonts (variables are provided by next/font in the root layout) */
+    --font-body: var(--font-dm-sans), system-ui, sans-serif;
+    --font-display: var(--font-unbounded), var(--font-body);
+
+    /* Fluid type scale: each value runs from a 390px to a 1440px viewport */
+    --fs-body: 1.0625rem;
+    --fs-display: clamp(2.188rem, 1.816rem + 1.524vw, 3.188rem);
+    --fs-hero: clamp(1.65rem, 1.079rem + 2.343vw, 3.188rem);
+    --fs-hero-sub: clamp(1.1rem, 0.8121rem + 1.181vw, 1.875rem);
+    --fs-badge: clamp(1.062rem, 0.8304rem + 0.9524vw, 1.688rem);
+    --fs-mega: clamp(2.188rem, 1.491rem + 2.857vw, 4.062rem);
+    --fs-card-num: clamp(1.875rem, 1.527rem + 1.429vw, 2.812rem);
+    --fs-card-title: clamp(1.25rem, 1.157rem + 0.381vw, 1.5rem);
+    --fs-eyebrow: clamp(2.5rem, 1.804rem + 2.857vw, 4.375rem);
+    --fs-aside: clamp(1.25rem, 1.157rem + 0.381vw, 1.5rem);
+
+    /* Layout */
+    --container-max: 87.5rem; /* 1400px */
+    --gutter: 1.25rem;
+    --section-space: clamp(3.75rem, 2.36rem + 5.71vw, 8.75rem);
+    --radius-sm: 0.25rem;
+    --radius-md: 0.9375rem;
+    --radius-lg: 1.5625rem;
+    --header-height: 4.375rem;
+
+    /* Motion */
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+    /* The colour behind outlined text; sections override it */
+    --surface: var(--color-surface);
+  }
+
+  @media (min-width: 64rem) {
+    :root {
+      --header-height: 5.9375rem;
+    }
+  }
+}
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    interpolate-size: allow-keywords;
+  }
+
+  body {
+    min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  img,
+  picture,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
+  }
+
+  img {
+    height: auto;
+  }
+
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    overflow-wrap: break-word;
+  }
+
+  ul[role='list'],
+  ol[role='list'] {
+    list-style: none;
+    padding: 0;
+  }
+}
+
+@layer base {
+  html {
+    scroll-padding-top: calc(var(--header-height) + 1rem);
+    color-scheme: light;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--fs-body);
+    line-height: 1.58;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.13;
+    text-wrap: balance;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-green);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: var(--color-green);
+    color: var(--color-navy);
+  }
+}
+
+@layer utilities {
+  .container {
+    width: 100%;
+    max-width: calc(var(--container-max) + 2 * var(--gutter));
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .skip-link {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 1000;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-navy);
+    color: var(--color-white);
+    transform: translateY(-200%);
+  }
+
+  .skip-link:focus-visible {
+    transform: none;
+  }
+
+  /*
+   * Outlined lettering. The text is filled with the surrounding colour and a
+   * transparent stroke reveals the clipped background as a clean outline,
+   * which avoids the overlapping-contour artefacts of a transparent fill.
+   */
+  .outline-text {
+    --outline-color: var(--color-green);
+    --outline-width: 0.1em;
+    color: var(--surface);
+    background-image: linear-gradient(var(--outline-color), var(--outline-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-stroke: var(--outline-width) transparent;
+  }
+
+  /* Gentle entrance as sections scroll into view; CSS only, no JS. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .reveal {
+        animation: reveal linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 35%;
+      }
+    }
+  }
+
+  @keyframes reveal {
+    from {
+      opacity: 0.2;
+      translate: 0 1.125rem;
+    }
+  }
+}
+
+@layer utilities {
+  /* Outlined call-to-action button used across sections. */
+  .button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.8rem 1.75rem;
+    border: 2px solid var(--color-navy);
+    border-radius: var(--radius-sm);
+    color: var(--color-navy);
+    font-weight: 700;
+    line-height: 1.2;
+    text-transform: uppercase;
+    transition: background-color 200ms ease, color 200ms ease;
+  }
+
+  .button:hover {
+    background: var(--color-navy);
+    color: var(--color-white);
+  }
+}

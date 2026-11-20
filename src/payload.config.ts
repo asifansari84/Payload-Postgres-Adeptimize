@@ -45,12 +45,17 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL || '',
 
       ssl: {
-        rejectUnauthorized: false,
+        rejectUnauthorized: true,
       },
 
       connectionTimeoutMillis: 10000,
-      max: 10,
-      idleTimeoutMillis: 10 * 60 * 1000,
+
+      // Reduce connections for Vercel serverless
+      max: 1,
+
+      // Close idle connections quickly
+      idleTimeoutMillis: 10000,
+
       keepAlive: true,
     },
   }),

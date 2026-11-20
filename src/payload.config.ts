@@ -18,6 +18,25 @@ import { Footer, Header } from './globals/SiteChrome'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+/**
+ * Supabase/Vercel URLs include `?sslmode=require`. node-postgres treats that as
+ * `verify-full` and lets it override the `ssl` option below, which fails with
+ * SELF_SIGNED_CERT_IN_CHAIN. Strip SSL params from the URL so `ssl` applies.
+ */
+const getConnectionString = () => {
+  const raw = process.env.DATABASE_URL || process.env.POSTGRES_URL || ''
+  if (!raw) return raw
+  try {
+    const url = new URL(raw)
+    for (const key of ['sslmode', 'sslrootcert', 'sslcert', 'sslkey', 'uselibpqcompat', 'pgbouncer', 'supa']) {
+      url.searchParams.delete(key)
+    }
+    return url.toString()
+  } catch {
+    return raw
+  }
+}
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -42,20 +61,15 @@ export default buildConfig({
     migrationDir: path.resolve(dirname, 'migrations'),
     push: process.env.PAYLOAD_DB_PUSH === 'true',
     pool: {
-      connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL || '',
+      connectionString: getConnectionString(),
 
       ssl: {
-        rejectUnauthorized: true,
+        rejectUnauthorized: false,
       },
 
       connectionTimeoutMillis: 10000,
-
-      // Reduce connections for Vercel serverless
-      max: 1,
-
-      // Close idle connections quickly
-      idleTimeoutMillis: 10000,
-
+      max: 10,
+      idleTimeoutMillis: 10 * 60 * 1000,
       keepAlive: true,
     },
   }),

@@ -1,97 +1,212 @@
-# Payload Blank Template
+# Adeptimize Website & CMS
 
-## Content management
+The marketing website for **Adeptimize**, built on **Payload CMS 3** with a **Next.js 16** frontend and a **PostgreSQL** database. Editors manage every page, service, location, blog post, form and the site header and footer from the Payload admin panel. Changes appear on the live site as soon as they are saved.
 
-Sign in at `/admin` to open the content workspace. **Posts**, **Pages**, and **Media** appear first, followed by forms, submissions, and account management.
+---
 
-In **Posts**, the **Content** tab holds the featured image and the rich article body. The **SEO** tab previews the search result and controls the canonical URL, robots directives, and social sharing metadata. The public blog lists published posts from Payload. Set `NEXT_PUBLIC_SITE_URL` to the public site origin for canonical and social URLs.
+## Table of contents
 
-The Next.js frontend uses the staging site’s exported page markup, shared header/footer, and theme stylesheet. Local HTML copies provide a frontend fallback if Payload or the database is unavailable.
+- [Tech stack](#tech-stack)
+- [Features](#features)
+- [Project structure](#project-structure)
+- [Content model](#content-model)
+- [Getting started](#getting-started)
+- [Environment variables](#environment-variables)
+- [Scripts](#scripts)
+- [Database & migrations](#database--migrations)
+- [Seeding content](#seeding-content)
+- [Caching & revalidation](#caching--revalidation)
+- [Testing](#testing)
+- [Deployment](#deployment)
 
-After the Postgres schema is ready, use `npm run seed:posts` to import the 11 archived articles and their images. Run the full seed to also import the staging pages and editable contact form:
+---
 
-```bash
-npm run seed:content
+## Tech stack
+
+| Layer            | Technology                                                                 |
+| ---------------- | -------------------------------------------------------------------------- |
+| CMS              | [Payload CMS](https://payloadcms.com) 3.94 (admin UI, REST & GraphQL API)  |
+| Framework        | [Next.js](https://nextjs.org) 16 (App Router, React Server Components)     |
+| UI               | React 19, CSS Modules, Tailwind CSS 4                                      |
+| Database         | PostgreSQL via `@payloadcms/db-postgres` (Drizzle-based adapter)           |
+| Rich text        | Lexical editor (`@payloadcms/richtext-lexical`)                            |
+| Image processing | Sharp (resizing, focal point)                                              |
+| Language         | TypeScript 5.7                                                             |
+| Testing          | Vitest + Testing Library (integration), Playwright (end-to-end)            |
+| Code quality     | ESLint 9 (`eslint-config-next`), Prettier                                  |
+| Runtime          | Node.js 22 / 24+                                                           |
+
+## Features
+
+- **Admin panel** at `/admin` with a custom content dashboard. Posts, Pages and Media are listed first.
+- **Page builder:** reusable blocks (Hero, Logo Showcase, Feature Grid, Process, Differentiators, Image Accordion, Testimonials, Service Carousel, Logo Strip, FAQ) with preview thumbnails.
+- **Fixed-layout pages:** Home, About Us, Our Services, Location, Blog and Contact Us. Each section is edited in its own tab.
+- **Services & Locations:** listing collections with section tabs, card settings and per-item SEO, served at `/service-item/[slug]` and on the Location page.
+- **Blog:** posts with a featured image, Lexical article body and a dedicated **SEO tab**. The SEO tab has a live search preview, a canonical URL, robots (`noindex`) settings and social metadata.
+- **Forms:** forms built in the CMS (text, email, phone, long text) that submit to `/api/forms/[slug]`. Submissions are stored in **Contact Submissions** with a status workflow (New → In progress → Resolved). Spam is filtered with a honeypot field. The newsletter signup works the same way.
+- **Global header & footer:** menu links, a full-screen menu panel and the footer, all editable from the CMS.
+- **Instant updates:** Payload hooks clear the Next.js cache after every change or delete.
+- **Fallback content:** if the CMS or database is unavailable, the site serves static HTML copies of the pages.
+- **Type safety:** TypeScript types are generated from the Payload schema (`src/payload-types.ts`).
+
+## Project structure
+
+```
+.
+├── public/                     # Static assets (site images, admin block previews)
+├── scripts/                    # Seed, import and revalidation scripts (run with tsx)
+├── src/
+│   ├── app/
+│   │   ├── (frontend)/         # Public website routes (home, about, blog, services, …)
+│   │   ├── (payload)/          # Payload admin, REST API and GraphQL routes
+│   │   └── api/                # Custom endpoints: forms, revalidate
+│   ├── blocks/                 # Page-builder block definitions
+│   ├── collections/            # Payload collections and shared section tabs
+│   ├── components/
+│   │   ├── admin/              # Custom admin UI (dashboard, SEO preview, row labels)
+│   │   ├── blocks/             # Frontend renderers for page-builder blocks
+│   │   ├── sections/           # Page sections (about, blog, contact, listing, …)
+│   │   ├── site/               # Header, footer, menu drawer, navigation progress
+│   │   └── ui/                 # Shared helpers and icons
+│   ├── content/                # Archived blog post HTML and manifest (seed source)
+│   ├── fields/                 # Reusable field factories (image, link, …)
+│   ├── globals/                # Header and Footer globals
+│   ├── hooks/                  # Cache revalidation hooks
+│   ├── lib/                    # CMS data access, routes, post metadata
+│   ├── migrations/             # Payload / Postgres migrations
+│   ├── payload.config.ts       # Payload configuration
+│   └── payload-types.ts        # Generated types (do not edit)
+├── tests/
+│   ├── e2e/                    # Playwright tests (admin + frontend)
+│   └── int/                    # Vitest API integration tests
+└── next.config.ts
 ```
 
-For a production database, generate and commit a Payload migration when collection schemas change, then apply migrations during deployment:
+## Content model
+
+**Collections**
+
+| Collection            | Slug                  | Purpose                                                    |
+| --------------------- | --------------------- | ---------------------------------------------------------- |
+| Pages                 | `pages`               | Site pages, edited with section tabs or the page builder   |
+| Services              | `services`            | Service detail pages and service cards                     |
+| Locations             | `locations`           | Location pages and slides for the Location page slider     |
+| Posts                 | `posts`               | Blog articles, with SEO metadata                           |
+| Media                 | `media`               | Uploaded images                                            |
+| Forms                 | `forms`               | Forms built in the CMS, with draft and published states    |
+| Contact Submissions   | `contact-submissions` | Form entries, with a status workflow                       |
+| Users                 | `users`               | Admin accounts, with authentication enabled                |
+
+**Globals:** `header` (header, menu links and menu panel) and `footer`.
+
+## Getting started
+
+### Prerequisites
+
+- Node.js `22.23.5+` or `24.22.3+`
+- PostgreSQL 14+ (local, or hosted such as Supabase, Neon or Vercel Postgres)
+
+### Setup
 
 ```bash
-npm run migrate:create
+# 1. Install dependencies
+npm install
+
+# 2. Configure the environment
+cp .env.example .env
+#    then edit DATABASE_URL and PAYLOAD_SECRET
+
+# 3. Create the database schema
 npm run migrate
+
+# 4. (Optional) Load the site content
+npm run seed:content
+
+# 5. Start the dev server
+npm run dev
 ```
 
-Run `npm run migrate` for a fresh local database as well. Automatic schema pushes are opt-in via `PAYLOAD_DB_PUSH=true` for development databases.
+- Website: <http://localhost:3000>
+- Admin panel: <http://localhost:3000/admin>. On first visit you will be asked to create the first admin user.
 
-Regenerate Payload’s TypeScript types and admin component map after changing the schema or adding editor components:
+## Environment variables
+
+| Variable               | Required | Description                                                             |
+| ---------------------- | -------- | ----------------------------------------------------------------------- |
+| `DATABASE_URL`         | Yes      | Postgres connection string. `POSTGRES_URL` is used if this is not set.  |
+| `PAYLOAD_SECRET`       | Yes      | Long random string. Used for auth tokens and the revalidate endpoint.   |
+| `NEXT_PUBLIC_SITE_URL` | Yes      | Public site origin, used for canonical and social URLs (e.g. `https://adeptimize.com`). |
+| `PAYLOAD_DB_PUSH`      | No       | Set to `true` to auto-push schema changes. **Development databases only.** |
+
+Never commit `.env`. To generate a secret, run `openssl rand -hex 32`.
+
+## Scripts
+
+| Command                        | Description                                         |
+| ------------------------------ | --------------------------------------------------- |
+| `npm run dev`                  | Start the development server                        |
+| `npm run devsafe`              | Clear `.next`, then start the development server    |
+| `npm run build`                | Production build                                    |
+| `npm run start`                | Serve the production build                          |
+| `npm run lint`                 | Run ESLint                                          |
+| `npm run migrate`              | Apply pending database migrations                   |
+| `npm run migrate:create`       | Create a migration from schema changes              |
+| `npm run generate:types`       | Regenerate `src/payload-types.ts`                   |
+| `npm run generate:importmap`   | Regenerate the admin component import map           |
+| `npm run seed:content`         | Seed all content (posts, pages, forms, …)           |
+| `npm run seed:posts`           | Import the 11 archived blog posts and their images  |
+| `npm run seed:home`            | Seed the homepage                                   |
+| `npm run seed:pages`           | Seed the fixed pages                                |
+| `npm run seed:listings`        | Seed services and locations                         |
+| `npm run revalidate`           | Clear the running site's CMS cache                  |
+| `npm run test:int`             | Run integration tests (Vitest)                      |
+| `npm run test:e2e`             | Run end-to-end tests (Playwright)                   |
+
+## Database & migrations
+
+Schema changes are managed with **migrations**. Schema push is turned off by default.
+
+1. Edit a collection, global or block in `src/`.
+2. Create a migration: `npm run migrate:create`
+3. Regenerate types: `npm run generate:types`
+4. If you added admin components: `npm run generate:importmap`
+5. Commit the migration files in `src/migrations/` together with the code change.
+6. Apply the migrations in each environment with `npm run migrate`.
+
+## Seeding content
+
+The seed scripts import the original site content into Payload. This includes the archived blog posts in `src/content/`, the page sections and the editable contact form.
 
 ```bash
-npm run generate:types
-npm run generate:importmap
+npm run seed:content   # everything
+npm run seed:posts     # blog posts only
 ```
 
-This template comes configured with the bare minimum to get started on anything you need.
+When they finish, the scripts call the revalidate endpoint so a running site shows the new content immediately.
 
-## Quick start
+## Caching & revalidation
 
-This template can be deployed directly from our Cloud hosting and it will setup MongoDB and cloud S3 object storage for media.
+CMS reads are cached under the Next.js tag `cms`. The cache is cleared:
 
-## Quick Start - local setup
+- **Automatically**, by Payload `afterChange` and `afterDelete` hooks on every collection and global.
+- **On demand**, by sending `POST /api/revalidate` with the `x-revalidate-secret: <PAYLOAD_SECRET>` header. `npm run revalidate` does this for you. The secret is compared in constant time.
 
-To spin up this template locally, follow these steps:
+## Testing
 
-### Clone
+```bash
+npm run test:int   # Vitest: API integration tests (tests/int)
+npm run test:e2e   # Playwright: admin + frontend flows (tests/e2e)
+```
 
-After you click the `Deploy` button above, you'll want to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
+Test environment settings are in `test.env`.
 
-### Development
+## Deployment
 
-1. First [clone the repo](#clone) if you have not done so already
-2. Copy `.env.example` to `.env` and set `DATABASE_URL` to your Postgres connection string. Set a strong `PAYLOAD_SECRET` for authentication.
+1. Provision a PostgreSQL database and set the [environment variables](#environment-variables).
+2. Install and build: `npm ci && npm run build`
+3. Apply migrations: `npm run migrate`. Run this on every deploy, before starting the server.
+4. Start the server: `npm run start`
 
-3. `pnpm install && pnpm dev` to install dependencies and start the dev server
-4. open `http://localhost:3000` to open the app in your browser
+The project can be deployed to any Node.js host (Vercel, Railway, Render, a VPS, …). For container deployment, a multi-stage `Dockerfile` is included. It requires `output: 'standalone'` in `next.config.ts`.
 
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
-
-#### Docker (Optional)
-
-If you prefer to use Docker for local development instead of a local MongoDB instance, the provided docker-compose.yml file can be used.
-
-To do so, follow these steps:
-
-- Modify the `MONGODB_URL` in your `.env` file to `mongodb://127.0.0.1/<dbname>`
-- Modify the `docker-compose.yml` file's `MONGODB_URL` to match the above `<dbname>`
-- Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
-
-## How it works
-
-The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
-
-### Collections
-
-See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend this functionality.
-
-- #### Users (Authentication)
-
-  Users are auth-enabled collections that have access to the admin panel.
-
-  For additional help, see the official [Auth Example](https://github.com/payloadcms/payload/tree/3.x/examples/auth) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
-
-- #### Media
-
-  This is the uploads enabled collection. It features pre-configured sizes, focal point and manual resizing to help you manage your pictures.
-
-### Docker
-
-Alternatively, you can use [Docker](https://www.docker.com) to spin up this template locally. To do so, follow these steps:
-
-1. Follow [steps 1 and 2 from above](#development), the docker-compose file will automatically use the `.env` file in your project root
-1. Next run `docker-compose up`
-1. Follow [steps 4 and 5 from above](#development) to login and create your first admin user
-
-That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
-
-## Questions
-
-If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+Uploaded media is stored on the local filesystem by default. On serverless or ephemeral hosts, configure a Payload storage adapter (such as S3 or Vercel Blob) so uploads persist between deploys.

@@ -42,12 +42,13 @@ export default buildConfig({
     migrationDir: path.resolve(dirname, 'migrations'),
     push: process.env.PAYLOAD_DB_PUSH === 'true',
     pool: {
-      // Prefer the app-specific URL, but accept the common Supabase/Vercel
-      // variable when DATABASE_URL is not defined.
       connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL || '',
+
+      ssl: {
+        rejectUnauthorized: true,
+      },
+
       connectionTimeoutMillis: 10000,
-      // The database is remote, so opening a connection is slow (~3 s). Keep
-      // a few connections open and alive between requests instead.
       max: 10,
       idleTimeoutMillis: 10 * 60 * 1000,
       keepAlive: true,

@@ -16,7 +16,6 @@ The marketing website for **Adeptimize**, built on **Payload CMS 3** with a **Ne
 - [Database & migrations](#database--migrations)
 - [Seeding content](#seeding-content)
 - [Caching & revalidation](#caching--revalidation)
-- [Testing](#testing)
 - [Deployment](#deployment)
 
 ---
@@ -32,7 +31,6 @@ The marketing website for **Adeptimize**, built on **Payload CMS 3** with a **Ne
 | Rich text        | Lexical editor (`@payloadcms/richtext-lexical`)                            |
 | Image processing | Sharp (resizing, focal point)                                              |
 | Language         | TypeScript 5.7                                                             |
-| Testing          | Vitest + Testing Library (integration), Playwright (end-to-end)            |
 | Code quality     | ESLint 9 (`eslint-config-next`), Prettier                                  |
 | Runtime          | Node.js 22 / 24+                                                           |
 
@@ -76,9 +74,6 @@ The marketing website for **Adeptimize**, built on **Payload CMS 3** with a **Ne
 │   ├── migrations/             # Payload / Postgres migrations
 │   ├── payload.config.ts       # Payload configuration
 │   └── payload-types.ts        # Generated types (do not edit)
-├── tests/
-│   ├── e2e/                    # Playwright tests (admin + frontend)
-│   └── int/                    # Vitest API integration tests
 └── next.config.ts
 ```
 
@@ -159,8 +154,6 @@ Never commit `.env`. To generate a secret, run `openssl rand -hex 32`.
 | `npm run seed:pages`           | Seed the fixed pages                                |
 | `npm run seed:listings`        | Seed services and locations                         |
 | `npm run revalidate`           | Clear the running site's CMS cache                  |
-| `npm run test:int`             | Run integration tests (Vitest)                      |
-| `npm run test:e2e`             | Run end-to-end tests (Playwright)                   |
 
 ## Database & migrations
 
@@ -191,15 +184,6 @@ CMS reads are cached under the Next.js tag `cms`. The cache is cleared:
 - **Automatically**, by Payload `afterChange` and `afterDelete` hooks on every collection and global.
 - **On demand**, by sending `POST /api/revalidate` with the `x-revalidate-secret: <PAYLOAD_SECRET>` header. `npm run revalidate` does this for you. The secret is compared in constant time.
 
-## Testing
-
-```bash
-npm run test:int   # Vitest: API integration tests (tests/int)
-npm run test:e2e   # Playwright: admin + frontend flows (tests/e2e)
-```
-
-Test environment settings are in `test.env`.
-
 ## Deployment
 
 1. Provision a PostgreSQL database and set the [environment variables](#environment-variables).
@@ -207,6 +191,6 @@ Test environment settings are in `test.env`.
 3. Apply migrations: `npm run migrate`. Run this on every deploy, before starting the server.
 4. Start the server: `npm run start`
 
-The project can be deployed to any Node.js host (Vercel, Railway, Render, a VPS, …). For container deployment, a multi-stage `Dockerfile` is included. It requires `output: 'standalone'` in `next.config.ts`.
+The project can be deployed to any Node.js host (Vercel, Railway, Render, a VPS, …).
 
 Uploaded media is stored on the local filesystem by default. On serverless or ephemeral hosts, configure a Payload storage adapter (such as S3 or Vercel Blob) so uploads persist between deploys.

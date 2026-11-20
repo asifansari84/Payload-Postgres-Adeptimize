@@ -17,8 +17,11 @@ export const CMS_TAG = 'cms'
 
 export const getCMS = cache(() => getPayload({ config }))
 
+/** Bump when the shape of cached data changes (e.g. media URLs) so old entries are skipped. */
+const CACHE_VERSION = 'v2'
+
 const cached = <Args extends unknown[], Result>(key: string, load: (...args: Args) => Promise<Result>) =>
-  unstable_cache(load, [key], { tags: [CMS_TAG], revalidate: 3600 })
+  unstable_cache(load, [CACHE_VERSION, key], { tags: [CMS_TAG], revalidate: 3600 })
 
 const safe = <Args extends unknown[], Result, Fallback>(label: string, load: (...args: Args) => Promise<Result>, fallback: Fallback) =>
   cache(async (...args: Args): Promise<Result | Fallback> => {

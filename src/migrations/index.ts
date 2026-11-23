@@ -19,6 +19,13 @@ import * as migration_20261123_093604_post_categories from './20261123_093604_po
 import * as migration_20261123_095000_post_author_user from './20261123_095000_post_author_user';
 import * as migration_20261123_103156_user_username_avatar from './20261123_103156_user_username_avatar';
 import * as migration_20261123_103641_user_display_name from './20261123_103641_user_display_name';
+import * as migration_20261123_124003_site_settings from './20261123_124003_site_settings';
+import * as migration_20261123_131704_single_admin_logo from './20261123_131704_single_admin_logo';
+import * as migration_20261123_131706_admin_logo_tone from './20261123_131706_admin_logo_tone';
+import * as migration_20261123_132118_remove_admin_logo_tone from './20261123_132118_remove_admin_logo_tone';
+import * as migration_20261123_132626_site_favicon from './20261123_132626_site_favicon';
+import * as migration_20261123_135154_discourage_search_engines from './20261123_135154_discourage_search_engines';
+import * as migration_20261123_135942_content_trash from './20261123_135942_content_trash';
 
 export const migrations = [
   {
@@ -124,6 +131,41 @@ export const migrations = [
   {
     up: migration_20261123_103641_user_display_name.up,
     down: migration_20261123_103641_user_display_name.down,
-    name: '20261123_103641_user_display_name'
+    name: '20261123_103641_user_display_name',
+  },
+  {
+    up: migration_20261123_124003_site_settings.up,
+    down: migration_20261123_124003_site_settings.down,
+    name: '20261123_124003_site_settings',
+  },
+  {
+    up: migration_20261123_131704_single_admin_logo.up,
+    down: migration_20261123_131704_single_admin_logo.down,
+    name: '20261123_131704_single_admin_logo',
+  },
+  {
+    up: migration_20261123_131706_admin_logo_tone.up,
+    down: migration_20261123_131706_admin_logo_tone.down,
+    name: '20261123_131706_admin_logo_tone',
+  },
+  {
+    up: migration_20261123_132118_remove_admin_logo_tone.up,
+    down: migration_20261123_132118_remove_admin_logo_tone.down,
+    name: '20261123_132118_remove_admin_logo_tone',
+  },
+  {
+    up: migration_20261123_132626_site_favicon.up,
+    down: migration_20261123_132626_site_favicon.down,
+    name: '20261123_132626_site_favicon',
+  },
+  {
+    up: migration_20261123_135154_discourage_search_engines.up,
+    down: migration_20261123_135154_discourage_search_engines.down,
+    name: '20261123_135154_discourage_search_engines',
+  },
+  {
+    up: migration_20261123_135942_content_trash.up,
+    down: migration_20261123_135942_content_trash.down,
+    name: '20261123_135942_content_trash'
   },
 ];

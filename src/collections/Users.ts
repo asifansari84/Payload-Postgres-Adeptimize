@@ -19,7 +19,14 @@ export const Users: CollectionConfig = {
       },
     ],
   },
-  auth: true,
+  // Sign in with either a username or an email address.
+  auth: {
+    loginWithUsername: {
+      allowEmailLogin: true,
+      requireEmail: true,
+      requireUsername: true,
+    },
+  },
   // When a user is attached to another document (e.g. a post's author), only expose their name.
   defaultPopulate: { name: true },
   fields: [

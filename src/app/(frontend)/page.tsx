@@ -20,7 +20,8 @@ export async function generateMetadata(): Promise<Metadata> {
     title: page?.seo?.title ? { absolute: page.seo.title } : undefined,
     description: page?.seo?.description || undefined,
     alternates: { canonical: '/' },
-    robots: page?.seo?.noIndex ? { index: false, follow: true } : undefined,
+    // Only set when restricting, so the site-wide setting in the root layout applies otherwise.
+    ...(page?.seo?.noIndex ? { robots: { index: false, follow: true } } : {}),
   }
 }
 

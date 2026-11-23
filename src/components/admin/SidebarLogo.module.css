@@ -1,0 +1,35 @@
+.logo {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  max-width: 160px;
+  margin-bottom: var(--base);
+  border-radius: 4px;
+  text-decoration: none;
+  color: var(--theme-text);
+}
+
+.logo:focus-visible {
+  outline: 2px solid var(--theme-success-500, currentColor);
+  outline-offset: 4px;
+}
+
+/* Fixed height: SVGs with only a viewBox have no intrinsic size and would
+   collapse to 0×0 with width/height auto. Width follows the aspect ratio. */
+.logo img {
+  display: block;
+  flex-shrink: 0;
+  height: 40px;
+  width: auto;
+  max-width: 160px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

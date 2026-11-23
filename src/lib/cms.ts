@@ -53,6 +53,15 @@ export const getSiteChrome = safe(
   { header: null, footer: null },
 )
 
+export const getSiteSettings = safe(
+  'Site settings',
+  cached('site-settings', async () => {
+    const payload = await getCMS()
+    return payload.findGlobal({ slug: 'site-settings', depth: 1 })
+  }),
+  null,
+)
+
 /* ---------- Pages ---------- */
 
 export const getPublishedPage = safe(
@@ -77,7 +86,8 @@ export function pageMetadata(page: { title?: string | null; seo?: { title?: stri
     title: page.seo?.title ? { absolute: page.seo.title } : page.title,
     description: page.seo?.description || undefined,
     alternates: { canonical: path },
-    robots: page.seo?.noIndex ? { index: false, follow: true } : undefined,
+    // Only set when restricting, so the site-wide setting in the root layout applies otherwise.
+    ...(page.seo?.noIndex ? { robots: { index: false, follow: true } } : {}),
   }
 }
 

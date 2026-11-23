@@ -3,6 +3,7 @@ import localFont from 'next/font/local'
 import { Unbounded } from 'next/font/google'
 import { Suspense, type ReactNode } from 'react'
 import { NavigationProgress } from '@/components/site/NavigationProgress'
+import { getSiteSettings } from '@/lib/cms'
 import './globals.css'
 
 const dmSans = localFont({
@@ -18,10 +19,23 @@ const unbounded = Unbounded({ subsets: ['latin'], variable: '--font-unbounded', 
 
 const siteURL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteURL),
-  title: { default: 'Adeptimize — Business Consulting', template: '%s · Adeptimize' },
-  description: 'Adeptimize helps ambitious businesses grow with smart marketing strategy and execution.',
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings().catch(() => null)
+  const favicon = settings?.favicon && typeof settings.favicon === 'object' ? settings.favicon : null
+
+  return {
+    metadataBase: new URL(siteURL),
+    title: { default: 'Adeptimize — Business Consulting', template: '%s · Adeptimize' },
+    description: 'Adeptimize helps ambitious businesses grow with smart marketing strategy and execution.',
+    icons: favicon?.url
+      ? {
+          icon: [{ url: favicon.url, type: favicon.mimeType || undefined }],
+          apple: [{ url: favicon.url }],
+        }
+      : undefined,
+    // Settings → General → Search engine visibility. Pages only override this to restrict further.
+    ...(settings?.discourageSearchEngines ? { robots: { index: false, follow: false } } : {}),
+  }
 }
 
 export const viewport: Viewport = { themeColor: '#e5f4fd' }

@@ -55,7 +55,10 @@ export const Pages: CollectionConfig = {
     listSearchableFields: ['title', 'slug'],
     description: 'Home, About Us, Our Services, Location, Blog and Contact Us. Each page has its sections in their own tabs.',
     preview: (doc) => (doc?.status === 'published' && typeof doc.slug === 'string' ? pagePath(doc.slug) : null),
+    components: { beforeListTable: ['/components/admin/StatusTabs'] },
   },
+  // Delete moves to Trash (restore or delete permanently from the Trash tab).
+  trash: true,
   access: {
     read: ({ req }) => (req.user ? true : { status: { equals: 'published' } }),
   },

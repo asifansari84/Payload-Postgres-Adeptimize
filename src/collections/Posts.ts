@@ -26,7 +26,10 @@ export const Posts: CollectionConfig = {
     listSearchableFields: ['title', 'slug', 'excerpt'],
     description: 'Write and publish blog posts, and control how they appear in search and social shares.',
     preview: (post) => post?.status === 'published' && typeof post.slug === 'string' ? postHref(post.slug) : null,
+    components: { beforeListTable: ['/components/admin/StatusTabs'] },
   },
+  // Delete moves to Trash (restore or delete permanently from the Trash tab).
+  trash: true,
   access: {
     read: ({ req }) => req.user ? true : { status: { equals: 'published' } },
   },

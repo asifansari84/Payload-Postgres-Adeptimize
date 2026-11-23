@@ -39,7 +39,8 @@ export function postMetadata(slug: string, post?: Post | null): Metadata {
     title,
     description,
     alternates: { canonical },
-    robots: { index: !post?.seo?.noIndex, follow: !post?.seo?.noFollow },
+    // Only set when restricting, so the site-wide setting in the root layout applies otherwise.
+    ...(post?.seo?.noIndex || post?.seo?.noFollow ? { robots: { index: !post.seo.noIndex, follow: !post.seo.noFollow } } : {}),
     openGraph: {
       type: 'article',
       siteName: 'Adeptimize',

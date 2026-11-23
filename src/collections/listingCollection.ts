@@ -34,7 +34,10 @@ export function listingCollection({
       listSearchableFields: ['title', 'slug'],
       description,
       preview: (doc) => (doc?.status === 'published' && typeof doc.slug === 'string' ? path(doc.slug) : null),
+      components: { beforeListTable: ['/components/admin/StatusTabs'] },
     },
+    // Delete moves to Trash (restore or delete permanently from the Trash tab).
+    trash: true,
     hooks: revalidateHooks,
     access: {
       read: ({ req }) => (req.user ? true : { status: { equals: 'published' } }),

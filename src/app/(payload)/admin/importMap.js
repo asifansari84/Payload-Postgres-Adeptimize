@@ -26,6 +26,7 @@ import { NameRowLabel as NameRowLabel_a22f15833f5c099d83eec5874403c04c } from '.
 import { QuestionRowLabel as QuestionRowLabel_a22f15833f5c099d83eec5874403c04c } from '../../../components/admin/RowLabel'
 import { ValueRowLabel as ValueRowLabel_a22f15833f5c099d83eec5874403c04c } from '../../../components/admin/RowLabel'
 import { LabelRowLabel as LabelRowLabel_a22f15833f5c099d83eec5874403c04c } from '../../../components/admin/RowLabel'
+import { default as default_4e0edc318a712408d652448dba8dc79e } from '../../../components/admin/StatusTabs'
 import { SlugField as SlugField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
 import { MediaThumbnailCell as MediaThumbnailCell_dd9c8498169114ae90ff28d9b78aa60d } from '../../../components/admin/MediaThumbnailCell'
 import { FixedToolbarFeatureClient as FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
@@ -36,8 +37,11 @@ import { LinkRowLabel as LinkRowLabel_a22f15833f5c099d83eec5874403c04c } from '.
 import { SocialRowLabel as SocialRowLabel_a22f15833f5c099d83eec5874403c04c } from '../../../components/admin/RowLabel'
 import { default as default_47861655001cbf48e6259b36cb95a68a } from '../../../components/admin/UserAvatar'
 import { default as default_432e49c96dbaa18f526f7d29c02564e9 } from '../../../components/admin/ContentDashboard'
+import { default as default_e6d750c1905ba10fc47896eb7bd99962 } from '../../../components/admin/SidebarLogo'
+import { default as default_ce3821a7b35a5f1e86b97db3fb5d284d } from '../../../components/admin/DashboardLink'
 import { default as default_68d3881468010d227d214cd5d4af8913 } from '../../../components/admin/NavDefaultOpen'
 import { default as default_f1f33fccd5827701921baeb849bf3566 } from '../../../components/admin/StripExtensionAttributes'
+import { default as default_50b741fdac6d6612774c85f092b29a25 } from '../../../components/admin/BackToList'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -70,6 +74,7 @@ export const importMap = {
   "/components/admin/RowLabel#QuestionRowLabel": QuestionRowLabel_a22f15833f5c099d83eec5874403c04c,
   "/components/admin/RowLabel#ValueRowLabel": ValueRowLabel_a22f15833f5c099d83eec5874403c04c,
   "/components/admin/RowLabel#LabelRowLabel": LabelRowLabel_a22f15833f5c099d83eec5874403c04c,
+  "/components/admin/StatusTabs#default": default_4e0edc318a712408d652448dba8dc79e,
   "@payloadcms/next/client#SlugField": SlugField_2b8867833a34864a02ddf429b0728a40,
   "/components/admin/MediaThumbnailCell#MediaThumbnailCell": MediaThumbnailCell_dd9c8498169114ae90ff28d9b78aa60d,
   "@payloadcms/richtext-lexical/client#FixedToolbarFeatureClient": FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
@@ -80,7 +85,10 @@ export const importMap = {
   "/components/admin/RowLabel#SocialRowLabel": SocialRowLabel_a22f15833f5c099d83eec5874403c04c,
   "/components/admin/UserAvatar#default": default_47861655001cbf48e6259b36cb95a68a,
   "/components/admin/ContentDashboard#default": default_432e49c96dbaa18f526f7d29c02564e9,
+  "/components/admin/SidebarLogo#default": default_e6d750c1905ba10fc47896eb7bd99962,
+  "/components/admin/DashboardLink#default": default_ce3821a7b35a5f1e86b97db3fb5d284d,
   "/components/admin/NavDefaultOpen#default": default_68d3881468010d227d214cd5d4af8913,
   "/components/admin/StripExtensionAttributes#default": default_f1f33fccd5827701921baeb849bf3566,
+  "/components/admin/BackToList#default": default_50b741fdac6d6612774c85f092b29a25,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

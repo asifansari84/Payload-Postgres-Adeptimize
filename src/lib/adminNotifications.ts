@@ -4,6 +4,10 @@
  * `{{label}}` is the collection label, `{{title}}` the document title, `{{count}}`/`{{total}}` numbers.
  */
 export const adminNotifications = {
+  authentication: {
+    // Login field label (Payload's default is "Email or Username").
+    emailOrUsername: 'Username or Email',
+  },
   general: {
     successfullyCreated: '{{label}} created.',
     updatedSuccessfully: 'Changes saved.',

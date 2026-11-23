@@ -31,5 +31,14 @@ export const Media: CollectionConfig = {
   ],
   upload: {
     staticDir: 'public/media',
+    /* "Paste URL" downloads on the server for these sites. Browser-side fetching
+       fails for sites that don't send CORS headers (e.g. the old WordPress site). */
+    pasteURL: {
+      allowList: [
+        { protocol: 'https', hostname: 'staging.adeptimize.com' },
+        { protocol: 'https', hostname: 'adeptimize.com' },
+        { protocol: 'https', hostname: 'www.adeptimize.com' },
+      ],
+    },
   },
 }

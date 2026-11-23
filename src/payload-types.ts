@@ -108,10 +108,12 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
+    'site-settings': SiteSetting;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -124,22 +126,34 @@ export interface Config {
   };
 }
 export interface UserAuthOperations {
-  forgotPassword: {
-    email: string;
-    password: string;
-  };
-  login: {
-    email: string;
-    password: string;
-  };
+  forgotPassword:
+    | {
+        email: string;
+      }
+    | {
+        username: string;
+      };
+  login:
+    | {
+        email: string;
+        password: string;
+      }
+    | {
+        password: string;
+        username: string;
+      };
   registerFirstUser: {
-    email: string;
     password: string;
-  };
-  unlock: {
+    username: string;
     email: string;
-    password: string;
   };
+  unlock:
+    | {
+        email: string;
+      }
+    | {
+        username: string;
+      };
 }
 /**
  * Home, About Us, Our Services, Location, Blog and Contact Us. Each page has its sections in their own tabs.
@@ -638,6 +652,7 @@ export interface Page {
   status: 'draft' | 'published';
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1127,6 +1142,7 @@ export interface Service {
   order?: number | null;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
 }
 /**
  * Each location gets its own page at /location-<slug>/ and is listed on the Location page.
@@ -1306,6 +1322,7 @@ export interface Location {
   order?: number | null;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
 }
 /**
  * Write and publish blog posts, and control how they appear in search and social shares.
@@ -1392,6 +1409,7 @@ export interface Post {
   publishedAt?: string | null;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
 }
 /**
  * Group blog posts by topic. Assign categories from the post editor.
@@ -1425,10 +1443,6 @@ export interface Category {
 export interface User {
   id: number;
   name: string;
-  /**
-   * Lowercase letters, numbers, dots, dashes and underscores (3–30 characters).
-   */
-  username: string;
   displayName?: string | null;
   /**
    * Optional profile picture. A placeholder icon is shown when empty.
@@ -1437,6 +1451,10 @@ export interface User {
   updatedAt: string;
   createdAt: string;
   email: string;
+  /**
+   * Lowercase letters, numbers, dots, dashes and underscores (3–30 characters).
+   */
+  username: string;
   resetPasswordToken?: string | null;
   resetPasswordExpiration?: string | null;
   salt?: string | null;
@@ -1967,6 +1985,7 @@ export interface PagesSelect<T extends boolean = true> {
   status?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2292,6 +2311,7 @@ export interface ServicesSelect<T extends boolean = true> {
   order?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2427,6 +2447,7 @@ export interface LocationsSelect<T extends boolean = true> {
   order?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2459,6 +2480,7 @@ export interface PostsSelect<T extends boolean = true> {
   publishedAt?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2534,12 +2556,12 @@ export interface ContactSubmissionsSelect<T extends boolean = true> {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
-  username?: T;
   displayName?: T;
   avatar?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
+  username?: T;
   resetPasswordToken?: T;
   resetPasswordExpiration?: T;
   salt?: T;
@@ -2736,6 +2758,33 @@ export interface Footer {
   createdAt?: string | null;
 }
 /**
+ * General settings for the site and the admin panel.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  /**
+   * Used as the logo text and alt text when no logo is set.
+   */
+  siteName?: string | null;
+  /**
+   * The small icon shown in browser tabs and bookmarks. A square PNG (at least 512×512px), SVG or ICO works best.
+   */
+  favicon?: (number | null) | Media;
+  /**
+   * Search engine visibility. When ticked, every page asks search engines not to index it or follow its links. It is up to search engines to honor this request.
+   */
+  discourageSearchEngines?: boolean | null;
+  /**
+   * SVG, or a PNG with a transparent background at least 320×80px. Shown up to 160×40px. Falls back to the menu logo.
+   */
+  adminLogo?: (number | null) | Media;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
@@ -2856,6 +2905,19 @@ export interface FooterSelect<T extends boolean = true> {
   newsletterTitle?: T;
   newsletterPlaceholder?: T;
   copyright?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  siteName?: T;
+  favicon?: T;
+  discourageSearchEngines?: T;
+  adminLogo?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

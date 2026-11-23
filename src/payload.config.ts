@@ -15,6 +15,7 @@ import { Locations } from './collections/Locations'
 import { ContactSubmissions } from './collections/ContactSubmissions'
 import { Forms } from './collections/Forms'
 import { Footer, Header } from './globals/SiteChrome'
+import { SiteSettings } from './globals/SiteSettings'
 import { adminNotifications } from './lib/adminNotifications'
 
 const filename = fileURLToPath(import.meta.url)
@@ -46,8 +47,8 @@ export default buildConfig({
     meta: { titleSuffix: ' · Adeptimize CMS' },
     components: {
       beforeDashboard: ['/components/admin/ContentDashboard'],
-      providers: ['/components/admin/StripExtensionAttributes'],
-      beforeNavLinks: ['/components/admin/NavDefaultOpen'],
+      providers: ['/components/admin/StripExtensionAttributes', '/components/admin/BackToList'],
+      beforeNavLinks: ['/components/admin/SidebarLogo', '/components/admin/DashboardLink', '/components/admin/NavDefaultOpen'],
     },
     importMap: {
       baseDir: path.resolve(dirname),
@@ -57,7 +58,7 @@ export default buildConfig({
   },
   i18n: { translations: { en: adminNotifications } },
   collections: [Pages, Services, Locations, Posts, Categories, Media, Forms, ContactSubmissions, Users],
-  globals: [Header, Footer],
+  globals: [Header, Footer, SiteSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

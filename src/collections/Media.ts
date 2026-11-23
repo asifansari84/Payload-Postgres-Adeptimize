@@ -10,9 +10,7 @@ export const Media: CollectionConfig = {
   hooks: {
     afterChange: [revalidateAfterChange],
     afterDelete: [revalidateAfterDelete],
-    // Files live in public/media, which Vercel serves from its CDN at /media/*.
-    // Payload's /api/media/file/* route reads from disk and 500s on Vercel, so
-    // point URLs at the static path instead.
+
     afterRead: [
       ({ doc }) => {
         if (doc?.filename) doc.url = `/media/${encodeURIComponent(doc.filename)}`

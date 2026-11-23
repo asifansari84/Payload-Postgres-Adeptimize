@@ -85,6 +85,8 @@ export const Header: GlobalConfig = {
               name: 'social',
               label: 'Social profiles',
               type: 'array',
+              labels: { singular: 'Profile', plural: 'Profiles' },
+              admin: { initCollapsed: true, components: { RowLabel: '/components/admin/RowLabel#SocialRowLabel' } },
               fields: [
                 {
                   type: 'row',
@@ -138,6 +140,8 @@ export const Footer: GlobalConfig = {
               name: 'social',
               label: 'Social profiles',
               type: 'array',
+              labels: { singular: 'Profile', plural: 'Profiles' },
+              admin: { initCollapsed: true, components: { RowLabel: '/components/admin/RowLabel#SocialRowLabel' } },
               fields: [
                 {
                   type: 'row',

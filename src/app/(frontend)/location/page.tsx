@@ -6,8 +6,6 @@ import { MediaImage } from '@/components/ui/helpers'
 import { getLocationCards, getPublishedPage, pageMetadata } from '@/lib/cms'
 import { locationPath } from '@/lib/routes'
 
-export const dynamic = 'force-dynamic'
-
 export async function generateMetadata(): Promise<Metadata> {
   return pageMetadata(await getPublishedPage('location'), '/location/')
 }

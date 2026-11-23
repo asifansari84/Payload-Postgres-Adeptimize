@@ -14,8 +14,6 @@ import { Testimonials } from '@/components/blocks/Testimonials'
 import { SiteShell } from '@/components/site/SiteShell'
 import { getPublishedPage } from '@/lib/cms'
 
-export const dynamic = 'force-dynamic'
-
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPublishedPage('home')
   return {

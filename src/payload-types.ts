@@ -71,6 +71,7 @@ export interface Config {
     services: Service;
     locations: Location;
     posts: Post;
+    categories: Category;
     media: Media;
     forms: Form;
     'contact-submissions': ContactSubmission;
@@ -80,12 +81,17 @@ export interface Config {
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    categories: {
+      posts: 'posts';
+    };
+  };
   collectionsSelect: {
     pages: PagesSelect<false> | PagesSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
     locations: LocationsSelect<false> | LocationsSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
+    categories: CategoriesSelect<false> | CategoriesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
@@ -639,7 +645,10 @@ export interface Page {
  */
 export interface Media {
   id: number;
-  alt: string;
+  /**
+   * Describes the image for screen readers and search engines. Leave empty for decorative images.
+   */
+  alt?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -1315,7 +1324,7 @@ export interface Post {
   /**
    * Short summary for the blog listing and the default search description.
    */
-  excerpt: string;
+  excerpt?: string | null;
   /**
    * Shown on the article, blog listing, and social previews by default.
    */
@@ -1372,35 +1381,40 @@ export interface Post {
    */
   sourceHtml?: string | null;
   status: 'draft' | 'published';
-  author?: string | null;
+  /**
+   * Pick existing categories or create a new one. Left empty, the post goes in "Uncategorized".
+   */
+  categories?: (number | Category)[] | null;
+  /**
+   * Set to whoever creates the post. Only user accounts can be chosen.
+   */
+  author?: (number | null) | User;
   publishedAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
- * Contact messages and newsletter signups submitted through the website.
+ * Group blog posts by topic. Assign categories from the post editor.
  *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "contact-submissions".
+ * via the `definition` "categories".
  */
-export interface ContactSubmission {
+export interface Category {
   id: number;
-  formSlug: string;
-  name?: string | null;
-  email?: string | null;
-  company?: string | null;
-  phone?: string | null;
-  message?: string | null;
-  submissionData:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
-  status: 'new' | 'in-progress' | 'resolved';
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  /**
+   * Posts in this category.
+   */
+  posts?: {
+    docs?: (number | Post)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -1430,6 +1444,33 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
+}
+/**
+ * Contact messages and newsletter signups submitted through the website.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-submissions".
+ */
+export interface ContactSubmission {
+  id: number;
+  formSlug: string;
+  name?: string | null;
+  email?: string | null;
+  company?: string | null;
+  phone?: string | null;
+  message?: string | null;
+  submissionData:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  status: 'new' | 'in-progress' | 'resolved';
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1470,6 +1511,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'posts';
         value: number | Post;
+      } | null)
+    | ({
+        relationTo: 'categories';
+        value: number | Category;
       } | null)
     | ({
         relationTo: 'media';
@@ -2400,8 +2445,21 @@ export interface PostsSelect<T extends boolean = true> {
   content?: T;
   sourceHtml?: T;
   status?: T;
+  categories?: T;
   author?: T;
   publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories_select".
+ */
+export interface CategoriesSelect<T extends boolean = true> {
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
+  posts?: T;
   updatedAt?: T;
   createdAt?: T;
 }

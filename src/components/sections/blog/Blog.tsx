@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { LinkJSXConverter, RichText, type JSXConvertersFunction } from '@payloadcms/richtext-lexical/react'
 import type { Post } from '@/payload-types'
-import { postHref, postImage, postMetadata } from '@/lib/postMetadata'
+import { postAuthorName, postHref, postImage, postMetadata } from '@/lib/postMetadata'
 import styles from './Blog.module.css'
 
 const dateFormat = new Intl.DateTimeFormat('en-US', {
@@ -27,7 +27,7 @@ const converters: JSXConvertersFunction = ({ defaultConverters }) => ({
 
 export function BlogArticle({ post }: { post: Post }) {
   const image = postImage(post.featuredImage)
-  const author = post.author || 'Adeptimize'
+  const author = postAuthorName(post.author) || 'Adeptimize'
   const metadata = postMetadata(post.slug, post)
   const graph = {
     '@context': 'https://schema.org',
@@ -96,9 +96,9 @@ export function BlogIndex({ posts, page, totalPages }: { posts: BlogCardPost[]; 
         </ul>
         {totalPages > 1 && (
           <nav className={styles.pagination} aria-label="Blog pages">
-            {page > 1 ? <Link className="button" href={page === 2 ? '/blog/' : `/blog/?page=${page - 1}`}>Previous</Link> : <span />}
+            {page > 1 ? <Link className="button" href={page === 2 ? '/blog/' : `/blog/page/${page - 1}/`}>Previous</Link> : <span />}
             <span>Page {page} of {totalPages}</span>
-            {page < totalPages ? <Link className="button" href={`/blog/?page=${page + 1}`}>Next</Link> : <span />}
+            {page < totalPages ? <Link className="button" href={`/blog/page/${page + 1}/`}>Next</Link> : <span />}
           </nav>
         )}
       </div>

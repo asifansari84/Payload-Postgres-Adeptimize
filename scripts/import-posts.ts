@@ -118,7 +118,6 @@ export async function importPosts(payload: Payload) {
         slug: source.slug,
         generateSlug: false,
         excerpt: source.excerpt || source.title,
-        author: 'Adeptimize',
         publishedAt: source.publishedAt || undefined,
         status: 'published',
         featuredImage,

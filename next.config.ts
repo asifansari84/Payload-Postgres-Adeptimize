@@ -17,6 +17,17 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // The blog listing is static, so its pages moved from /blog/?page=N to /blog/page/N/.
+  async redirects() {
+    return [
+      {
+        source: '/blog',
+        has: [{ type: 'query', key: 'page', value: '(?<page>\\d{1,5})' }],
+        destination: '/blog/page/:page',
+        permanent: true,
+      },
+    ]
+  },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
       '.cjs': ['.cts', '.cjs'],

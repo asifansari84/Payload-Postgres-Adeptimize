@@ -7,8 +7,6 @@ import type { ServiceCarouselBlock } from '@/payload-types'
 import { getPublishedPage, getServiceCards, pageMetadata } from '@/lib/cms'
 import { servicePath } from '@/lib/routes'
 
-export const dynamic = 'force-dynamic'
-
 export async function generateMetadata(): Promise<Metadata> {
   return pageMetadata(await getPublishedPage('our-services'), '/our-services/')
 }

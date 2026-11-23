@@ -10,26 +10,29 @@ import config from '@/payload.config'
  * a network round trip; results are cached under one tag and that tag is
  * cleared by Payload hooks whenever content is saved (see hooks/revalidate.ts).
  *
- * Cached loaders throw on failure so an error is never cached; the exported
- * helpers catch and fall back. React's cache() dedupes calls within a request.
+ * Loaders log and rethrow on failure so an error is never cached: pages are
+ * statically generated, and a failed regeneration keeps serving the last good
+ * version (a failed build stops the deploy) instead of caching an empty page.
+ * React's cache() dedupes calls within a request.
  */
 export const CMS_TAG = 'cms'
 
 export const getCMS = cache(() => getPayload({ config }))
 
 /** Bump when the shape of cached data changes (e.g. media URLs) so old entries are skipped. */
-const CACHE_VERSION = 'v2'
+const CACHE_VERSION = 'v3'
 
 const cached = <Args extends unknown[], Result>(key: string, load: (...args: Args) => Promise<Result>) =>
   unstable_cache(load, [CACHE_VERSION, key], { tags: [CMS_TAG], revalidate: 3600 })
 
-const safe = <Args extends unknown[], Result, Fallback>(label: string, load: (...args: Args) => Promise<Result>, fallback: Fallback) =>
+/* The fallback argument only types the result; it is not returned on errors (see above). */
+const safe = <Args extends unknown[], Result, Fallback>(label: string, load: (...args: Args) => Promise<Result>, _fallback: Fallback) =>
   cache(async (...args: Args): Promise<Result | Fallback> => {
     try {
       return await load(...args)
     } catch (error) {
       console.error(`${label} could not be loaded`, error)
-      return fallback
+      throw error
     }
   })
 
@@ -204,4 +207,13 @@ export async function getContactForm(selected?: number | Form | null): Promise<F
   } catch {
     return null
   }
+}
+
+/* ---------- Static generation ---------- */
+
+/** Slugs of every published document, used to prebuild their pages at deploy time. */
+export async function getPublishedSlugs(collection: 'posts' | 'services' | 'locations') {
+  const payload = await getCMS()
+  const { docs } = await payload.find({ collection, where: published, limit: 1000, depth: 0, pagination: false, select: { slug: true } })
+  return docs.map((doc) => doc.slug).filter((slug): slug is string => typeof slug === 'string' && slug.length > 0)
 }

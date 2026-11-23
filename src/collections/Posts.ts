@@ -3,9 +3,18 @@ import { hasText } from '@payloadcms/richtext-lexical/shared'
 import { slugField, ValidationError, type CollectionConfig } from 'payload'
 import archive from '../content/adeptimize-post-manifest.json'
 import { postHref } from '../lib/postMetadata'
+import { cleanSummary } from '../lib/text'
 import { revalidateAfterChange, revalidateAfterDelete } from '../hooks/revalidate'
 
-const imagesOnly = { mimeType: { contains: 'image/' } }
+export const UNCATEGORIZED_SLUG = 'uncategorized'
+
+const imagesOnly ={ mimeType: { contains: 'image/' } }
+
+/** Imported WordPress excerpts contain raw entities like `[&hellip;]`; show and store them as plain text. */
+const summaryHooks = {
+  beforeChange: [({ value }: { value?: string | null }) => cleanSummary(value)],
+  afterRead: [({ value }: { value?: string | null }) => cleanSummary(value)],
+}
 
 export const Posts: CollectionConfig = {
   slug: 'posts',
@@ -13,7 +22,7 @@ export const Posts: CollectionConfig = {
   admin: {
     group: 'Content',
     useAsTitle: 'title',
-    defaultColumns: ['title', 'status', 'featuredImage', 'publishedAt', 'updatedAt'],
+    defaultColumns: ['title', 'status', 'categories', 'featuredImage', 'publishedAt', 'updatedAt'],
     listSearchableFields: ['title', 'slug', 'excerpt'],
     description: 'Write and publish blog posts, and control how they appear in search and social shares.',
     preview: (post) => post?.status === 'published' && typeof post.slug === 'string' ? postHref(post.slug) : null,
@@ -40,6 +49,30 @@ export const Posts: CollectionConfig = {
         }
         return data
       },
+      // New posts are credited to the user who creates them unless an author was picked.
+      ({ data, operation, req }) => {
+        if (operation === 'create' && !data.author && req.user) data.author = req.user.id
+        return data
+      },
+      // Every post needs a category: fall back to "Uncategorized", creating it if it was deleted.
+      async ({ data, originalDoc, req }) => {
+        const categories = data.categories !== undefined ? data.categories : originalDoc?.categories
+        if (Array.isArray(categories) && categories.length > 0) return data
+        const { docs } = await req.payload.find({
+          collection: 'categories',
+          where: { slug: { equals: UNCATEGORIZED_SLUG } },
+          limit: 1,
+          depth: 0,
+          req,
+        })
+        const fallback = docs[0] ?? await req.payload.create({
+          collection: 'categories',
+          data: { title: 'Uncategorized', slug: UNCATEGORIZED_SLUG, generateSlug: false },
+          req,
+        })
+        data.categories = [fallback.id]
+        return data
+      },
     ],
   },
   fields: [
@@ -54,8 +87,8 @@ export const Posts: CollectionConfig = {
             {
               name: 'excerpt',
               type: 'textarea',
-              required: true,
               admin: { description: 'Short summary for the blog listing and the default search description.' },
+              hooks: summaryHooks,
             },
             {
               name: 'featuredImage',
@@ -91,7 +124,7 @@ export const Posts: CollectionConfig = {
               label: false,
               fields: [
                 { name: 'title', label: 'Search title', type: 'text', admin: { description: 'Aim for about 60 characters. Defaults to the post title.' } },
-                { name: 'description', label: 'Search description', type: 'textarea', admin: { description: 'Aim for about 160 characters. Defaults to the excerpt.' } },
+                { name: 'description', label: 'Search description', type: 'textarea', hooks: summaryHooks, admin: { description: 'Aim for about 160 characters. Defaults to the excerpt.' } },
                 {
                   name: 'canonicalURL',
                   label: 'Canonical URL',
@@ -134,7 +167,20 @@ export const Posts: CollectionConfig = {
       admin: { position: 'sidebar' },
       options: [{ label: 'Draft', value: 'draft' }, { label: 'Published', value: 'published' }],
     },
-    { name: 'author', type: 'text', admin: { position: 'sidebar' } },
+    {
+      name: 'categories',
+      type: 'relationship',
+      relationTo: 'categories',
+      hasMany: true,
+      admin: { position: 'sidebar', description: 'Pick existing categories or create a new one. Left empty, the post goes in "Uncategorized".' },
+    },
+    {
+      name: 'author',
+      type: 'relationship',
+      relationTo: 'users',
+      defaultValue: ({ user }) => user?.id,
+      admin: { position: 'sidebar', description: 'Set to whoever creates the post. Only user accounts can be chosen.' },
+    },
     { name: 'publishedAt', type: 'date', admin: { position: 'sidebar', date: { pickerAppearance: 'dayAndTime' } } },
   ],
   timestamps: true,

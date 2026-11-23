@@ -9,11 +9,13 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
+import { Categories } from './collections/Categories'
 import { Services } from './collections/Services'
 import { Locations } from './collections/Locations'
 import { ContactSubmissions } from './collections/ContactSubmissions'
 import { Forms } from './collections/Forms'
 import { Footer, Header } from './globals/SiteChrome'
+import { adminNotifications } from './lib/adminNotifications'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -49,8 +51,11 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    // Keep notifications on screen long enough to read, and show stacked ones in full.
+    toast: { duration: 5000, expand: true },
   },
-  collections: [Pages, Services, Locations, Posts, Media, Forms, ContactSubmissions, Users],
+  i18n: { translations: { en: adminNotifications } },
+  collections: [Pages, Services, Locations, Posts, Categories, Media, Forms, ContactSubmissions, Users],
   globals: [Header, Footer],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

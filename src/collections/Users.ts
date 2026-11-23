@@ -7,6 +7,8 @@ export const Users: CollectionConfig = {
     useAsTitle: 'email',
   },
   auth: true,
+  // When a user is attached to another document (e.g. a post's author), only expose their name.
+  defaultPopulate: { name: true },
   fields: [
     {
       name: 'name',

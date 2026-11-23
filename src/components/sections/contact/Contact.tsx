@@ -1,6 +1,7 @@
 import type { Form, Page } from '@/payload-types'
 import { Highlight, MediaImage, pad } from '../../ui/helpers'
 import styles from './Contact.module.css'
+import { ContactFormStatus } from './ContactFormStatus'
 
 type Section<K extends keyof Page> = NonNullable<Page[K]>
 type Details = Page['contactDetails']
@@ -15,18 +16,12 @@ const fallbackFields: Form['fields'] = [
   { name: 'message', label: 'Message', type: 'textarea', required: true },
 ]
 
-export function ContactForm({ form, state }: { form: Form | null; state?: 'sent' | 'error' }) {
+export function ContactForm({ form }: { form: Form | null }) {
   const fields = form?.fields?.length ? form.fields : fallbackFields
   const slug = form?.slug ?? 'contact'
   return (
     <form className={styles.form} action={`/api/forms/${encodeURIComponent(slug)}`} method="post" aria-label="Contact form">
-      {state && (
-        <p role="status" className={styles.notice} data-state={state}>
-          {state === 'sent'
-            ? form?.successMessage || 'Thanks. Your message has been sent.'
-            : 'Sorry, your message could not be sent. Please check the fields and try again.'}
-        </p>
-      )}
+      <ContactFormStatus className={styles.notice} successMessage={form?.successMessage} />
       {fields.map((field) => {
         const id = `contact-${field.name}`
         const common = { id, name: field.name, required: Boolean(field.required), className: styles.input }
@@ -51,7 +46,7 @@ export function ContactForm({ form, state }: { form: Form | null; state?: 'sent'
   )
 }
 
-export function ContactIntro({ data, form, state }: { data: Section<'contactIntro'>; form: Form | null; state?: 'sent' | 'error' }) {
+export function ContactIntro({ data, form }: { data: Section<'contactIntro'>; form: Form | null }) {
   return (
     <section className={styles.intro} aria-labelledby="contact-intro-title">
       <div className={`container ${styles.introLayout}`}>
@@ -61,7 +56,7 @@ export function ContactIntro({ data, form, state }: { data: Section<'contactIntr
           {paragraphs(data.text).map((text, index) => <p key={index}>{text}</p>)}
         </div>
         <div id="contact-form" className={`${styles.formCard} reveal`}>
-          <ContactForm form={form} state={state} />
+          <ContactForm form={form} />
         </div>
       </div>
     </section>

@@ -28,7 +28,7 @@ export const viewport: Viewport = { themeColor: '#e5f4fd' }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${unbounded.variable}`}>
+    <html lang="en" className={`${dmSans.variable} ${unbounded.variable}`} data-scroll-behavior="smooth">
       <body>
         <Suspense fallback={null}>
           <NavigationProgress />

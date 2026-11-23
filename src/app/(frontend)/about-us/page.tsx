@@ -5,8 +5,6 @@ import { PageHeader } from '@/components/sections/PageHeader'
 import { SiteShell } from '@/components/site/SiteShell'
 import { getPublishedPage, pageMetadata } from '@/lib/cms'
 
-export const dynamic = 'force-dynamic'
-
 export async function generateMetadata(): Promise<Metadata> {
   return pageMetadata(await getPublishedPage('about-us'), '/about-us/')
 }

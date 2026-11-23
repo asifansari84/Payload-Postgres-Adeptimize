@@ -8,6 +8,11 @@ export function postHref(slug: string) {
   return `${archivedPost(slug) ? '' : '/blog'}/${encodeURIComponent(slug)}`
 }
 
+/** The author's display name, or null when no user (or only an unpopulated ID) is attached. */
+export function postAuthorName(author: Post['author']) {
+  return typeof author === 'object' && author?.name ? author.name : null
+}
+
 export function archivedPost(slug: string) {
   return archive.find((post) => post.slug === slug)
 }
@@ -43,7 +48,7 @@ export function postMetadata(slug: string, post?: Post | null): Metadata {
       description: socialDescription,
       publishedTime: post?.publishedAt ?? (fallback?.publishedAt || undefined),
       modifiedTime: post?.updatedAt,
-      authors: post?.author ? [post.author] : undefined,
+      authors: post && postAuthorName(post.author) ? [postAuthorName(post.author)!] : undefined,
       images,
     },
     twitter: {

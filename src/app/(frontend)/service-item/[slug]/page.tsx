@@ -1,12 +1,15 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ServiceDetail } from '@/components/sections/listing/ListingPage'
-import { getService, pageMetadata } from '@/lib/cms'
+import { getPublishedSlugs, getService, pageMetadata } from '@/lib/cms'
 import { servicePath } from '@/lib/routes'
 
-export const dynamic = 'force-dynamic'
-
 type Props = { params: Promise<{ slug: string }> }
+
+/** Prebuild every published service; new ones are built on first visit and cached. */
+export async function generateStaticParams() {
+  return (await getPublishedSlugs('services')).map((slug) => ({ slug }))
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params

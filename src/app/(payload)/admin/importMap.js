@@ -29,7 +29,9 @@ import { LabelRowLabel as LabelRowLabel_a22f15833f5c099d83eec5874403c04c } from 
 import { SlugField as SlugField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
 import { FixedToolbarFeatureClient as FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { default as default_314a9a327682c5a5ca5761af49789da5 } from '../../../components/admin/PostSearchPreview'
+import { default as default_37ab194fe8d64aa61bb1bc2922224097 } from '../../../components/admin/MediaCreatedRedirect'
 import { LinkRowLabel as LinkRowLabel_a22f15833f5c099d83eec5874403c04c } from '../../../components/admin/RowLabel'
+import { SocialRowLabel as SocialRowLabel_a22f15833f5c099d83eec5874403c04c } from '../../../components/admin/RowLabel'
 import { default as default_432e49c96dbaa18f526f7d29c02564e9 } from '../../../components/admin/ContentDashboard'
 import { default as default_68d3881468010d227d214cd5d4af8913 } from '../../../components/admin/NavDefaultOpen'
 import { default as default_f1f33fccd5827701921baeb849bf3566 } from '../../../components/admin/StripExtensionAttributes'
@@ -68,7 +70,9 @@ export const importMap = {
   "@payloadcms/next/client#SlugField": SlugField_2b8867833a34864a02ddf429b0728a40,
   "@payloadcms/richtext-lexical/client#FixedToolbarFeatureClient": FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "/components/admin/PostSearchPreview#default": default_314a9a327682c5a5ca5761af49789da5,
+  "/components/admin/MediaCreatedRedirect#default": default_37ab194fe8d64aa61bb1bc2922224097,
   "/components/admin/RowLabel#LinkRowLabel": LinkRowLabel_a22f15833f5c099d83eec5874403c04c,
+  "/components/admin/RowLabel#SocialRowLabel": SocialRowLabel_a22f15833f5c099d83eec5874403c04c,
   "/components/admin/ContentDashboard#default": default_432e49c96dbaa18f526f7d29c02564e9,
   "/components/admin/NavDefaultOpen#default": default_68d3881468010d227d214cd5d4af8913,
   "/components/admin/StripExtensionAttributes#default": default_f1f33fccd5827701921baeb849bf3566,

@@ -171,7 +171,9 @@
   border-radius: 50%;
   background: var(--color-navy);
   color: var(--color-white);
-  transition: background-color 200ms ease, color 200ms ease;
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
 }
 
 .social a:hover {

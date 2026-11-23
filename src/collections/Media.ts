@@ -3,7 +3,11 @@ import { revalidateAfterChange, revalidateAfterDelete } from '../hooks/revalidat
 
 export const Media: CollectionConfig = {
   slug: 'media',
-  admin: { group: 'Content' },
+  labels: { singular: 'Media file', plural: 'Media' },
+  admin: {
+    group: 'Content',
+    components: { edit: { beforeDocumentControls: ['/components/admin/MediaCreatedRedirect'] } },
+  },
   access: {
     read: () => true,
   },
@@ -22,7 +26,7 @@ export const Media: CollectionConfig = {
     {
       name: 'alt',
       type: 'text',
-      required: true,
+      admin: { description: 'Describes the image for screen readers and search engines. Leave empty for decorative images.' },
     },
   ],
   upload: {

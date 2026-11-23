@@ -3,13 +3,20 @@ import { notFound } from 'next/navigation'
 import { BlogArticle } from '@/components/sections/blog/Blog'
 import { LocationDetail } from '@/components/sections/listing/ListingPage'
 import { SiteShell } from '@/components/site/SiteShell'
-import { getLocation, getPost, pageMetadata } from '@/lib/cms'
-import { postMetadata } from '@/lib/postMetadata'
+import { getLocation, getPost, getPublishedSlugs, pageMetadata } from '@/lib/cms'
+import { postHref, postMetadata } from '@/lib/postMetadata'
 import { locationPath } from '@/lib/routes'
 
-export const dynamic = 'force-dynamic'
-
 type RouteProps = { params: Promise<{ slug: string[] }> }
+
+/** Prebuild every published post and location; new ones are built on first visit and cached. */
+export async function generateStaticParams() {
+  const [posts, locations] = await Promise.all([getPublishedSlugs('posts'), getPublishedSlugs('locations')])
+  return [
+    ...posts.map((slug) => ({ slug: postHref(slug).split('/').filter(Boolean).map(decodeURIComponent) })),
+    ...locations.map((slug) => ({ slug: [`location-${slug}`] })),
+  ]
+}
 
 /** Location pages live at /location-<slug>/. */
 function locationSlug(slug: string[]) {

@@ -42,6 +42,7 @@ const getConnectionString = () => {
 export default buildConfig({
   admin: {
     user: Users.slug,
+    avatar: { Component: '/components/admin/UserAvatar' },
     meta: { titleSuffix: ' · Adeptimize CMS' },
     components: {
       beforeDashboard: ['/components/admin/ContentDashboard'],

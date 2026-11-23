@@ -1425,6 +1425,15 @@ export interface Category {
 export interface User {
   id: number;
   name: string;
+  /**
+   * Lowercase letters, numbers, dots, dashes and underscores (3–30 characters).
+   */
+  username: string;
+  displayName?: string | null;
+  /**
+   * Optional profile picture. A placeholder icon is shown when empty.
+   */
+  avatar?: (number | null) | Media;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -2525,6 +2534,9 @@ export interface ContactSubmissionsSelect<T extends boolean = true> {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  username?: T;
+  displayName?: T;
+  avatar?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

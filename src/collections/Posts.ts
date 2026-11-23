@@ -95,7 +95,10 @@ export const Posts: CollectionConfig = {
               type: 'upload',
               relationTo: 'media',
               filterOptions: imagesOnly,
-              admin: { description: 'Shown on the article, blog listing, and social previews by default.' },
+              admin: {
+                description: 'Shown on the article, blog listing, and social previews by default.',
+                components: { Cell: '/components/admin/MediaThumbnailCell#MediaThumbnailCell' },
+              },
             },
             {
               name: 'richContent',

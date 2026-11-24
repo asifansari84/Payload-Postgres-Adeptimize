@@ -1,8 +1,9 @@
 'use client'
 
 import { toast, useConfig } from '@payloadcms/ui'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { humanize, type FormDefinition, type FormFieldDef } from '@/forms/definitions'
+import { useModal } from '../useModal'
 
 export type LeadForm = FormDefinition & { total: number }
 
@@ -399,34 +400,6 @@ export function LeadsManager({
       )}
     </div>
   )
-}
-
-/** A native modal <dialog>: focus is kept inside, Esc closes it, and focus returns on close. */
-function useModal(onClose: () => void) {
-  const ref = useRef<HTMLDialogElement>(null)
-  const close = useRef(onClose)
-  close.current = onClose
-  useEffect(() => {
-    const dialog = ref.current
-    if (!dialog) return
-    const opener = document.activeElement as HTMLElement | null
-    dialog.showModal()
-    const onCancel = (e: Event) => {
-      e.preventDefault()
-      close.current()
-    }
-    dialog.addEventListener('cancel', onCancel)
-    return () => {
-      dialog.removeEventListener('cancel', onCancel)
-      if (dialog.open) dialog.close()
-      opener?.focus?.()
-    }
-  }, [])
-  // Clicking the backdrop (the dialog element itself, outside its content) closes it.
-  const onClick = (e: React.MouseEvent<HTMLDialogElement>) => {
-    if (e.target === e.currentTarget) close.current()
-  }
-  return { ref, onClick }
 }
 
 function LeadDialog({

@@ -1,14 +1,14 @@
 'use client'
 
-import { useAuth } from '@payloadcms/ui'
+import { useAuth, useConfig } from '@payloadcms/ui'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import type { DefaultCellComponentProps } from 'payload'
+import { useCallback, useEffect, useId, useRef, useState, type RefObject } from 'react'
+import { createPortal } from 'react-dom'
 
 import type { Media, User } from '@/payload-types'
 
-type AvatarValue = User['avatar'] | Record<string, unknown> | string | undefined
+export type AvatarValue = User['avatar'] | Record<string, unknown> | string | undefined
 
 /** Resolves an avatar value (populated media doc or just its ID) to an image URL. */
 export function useAvatarUrl(avatar: AvatarValue) {
@@ -51,7 +51,7 @@ function PlaceholderAvatar({ active = false, size = 25 }: { active?: boolean; si
   )
 }
 
-function Avatar({ avatar, alt, size = 25, active }: { avatar: AvatarValue; alt: string; size?: number; active?: boolean }) {
+export function Avatar({ avatar, alt, size = 25, active }: { avatar: AvatarValue; alt: string; size?: number; active?: boolean }) {
   const url = useAvatarUrl(avatar)
   if (!url) return <PlaceholderAvatar active={active} size={size} />
   return (
@@ -65,30 +65,133 @@ function Avatar({ avatar, alt, size = 25, active }: { avatar: AvatarValue; alt: 
   )
 }
 
-/** Admin account icon (top right): the user's avatar, or the placeholder when they haven't set one. */
+/** Admin account icon (top right): the user's avatar, or the placeholder when they haven't set one.
+ *  Clicking it opens the account page (Payload's link around it); hovering shows a small menu. */
 const UserAvatar = () => {
   const { user } = useAuth<User>()
   const pathname = usePathname()
+  const ref = useRef<HTMLSpanElement>(null)
   return (
-    <Avatar
-      active={pathname?.endsWith('/account')}
-      alt={user?.name ? `${user.name}'s avatar` : 'Account'}
-      avatar={user?.avatar}
-    />
+    <span ref={ref} className="adeptimize-account-avatar">
+      {user?.name && (
+        <span className="adeptimize-account-avatar__greeting">
+          <span className="adeptimize-account-avatar__howdy">Howdy,{'\u00A0'}</span>
+          <span className="adeptimize-account-avatar__name">{user.name}</span>
+        </span>
+      )}
+      <Avatar
+        active={pathname?.endsWith('/account')}
+        alt={user?.name ? `${user.name}'s avatar` : 'Account'}
+        avatar={user?.avatar}
+      />
+      {user && <AccountMenu anchorRef={ref} user={user} />}
+    </span>
   )
 }
 
 export default UserAvatar
 
-/** Users list "Avatar" column: the picture, or the placeholder instead of "<No Avatar>". */
-export function AvatarCell({ cellData, rowData, link, linkURL }: DefaultCellComponentProps) {
-  const name = typeof rowData?.name === 'string' ? rowData.name : 'User'
-  const avatar = <Avatar alt={`${name}'s avatar`} avatar={cellData as AvatarValue} size={32} />
-  return link && linkURL ? (
-    <Link aria-label={`Edit ${name}`} href={linkURL} style={{ display: 'inline-block' }}>
-      {avatar}
-    </Link>
-  ) : (
-    avatar
+const CLOSE_DELAY = 150
+
+/**
+ * Dropdown with "Edit profile" and "Log out", shown while the pointer is over
+ * the avatar or the menu (and while the avatar link has keyboard focus).
+ * It is rendered at the end of <body>: links can't sit inside Payload's
+ * account link, which wraps the avatar.
+ */
+function AccountMenu({ anchorRef, user }: { anchorRef: RefObject<HTMLSpanElement | null>; user: User }) {
+  const { config } = useConfig()
+  const admin = config.routes.admin === '/' ? '' : config.routes.admin
+  const [open, setOpen] = useState(false)
+  const [position, setPosition] = useState({ top: 0, right: 0 })
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const menuId = useId()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+
+  const show = useCallback(() => {
+    if (closeTimer.current) clearTimeout(closeTimer.current)
+    const link = anchorRef.current?.closest('a') ?? anchorRef.current
+    if (!link) return
+    const rect = link.getBoundingClientRect()
+    setPosition({ top: rect.bottom + 8, right: Math.max(8, window.innerWidth - rect.right) })
+    setOpen(true)
+  }, [anchorRef])
+
+  const hide = useCallback(() => {
+    if (closeTimer.current) clearTimeout(closeTimer.current)
+    closeTimer.current = setTimeout(() => setOpen(false), CLOSE_DELAY)
+  }, [])
+
+  // Listen on Payload's link around the avatar, so its whole area counts.
+  useEffect(() => {
+    const link = anchorRef.current?.closest('a')
+    if (!link) return
+    link.setAttribute('aria-haspopup', 'menu')
+    link.setAttribute('aria-controls', menuId)
+    const onFocusOut = (e: FocusEvent) => {
+      if (!(e.relatedTarget as HTMLElement | null)?.closest(`[id="${menuId}"]`)) hide()
+    }
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false)
+    link.addEventListener('mouseenter', show)
+    link.addEventListener('mouseleave', hide)
+    link.addEventListener('focus', show)
+    link.addEventListener('focusout', onFocusOut)
+    link.addEventListener('keydown', onKey)
+    return () => {
+      link.removeEventListener('mouseenter', show)
+      link.removeEventListener('mouseleave', hide)
+      link.removeEventListener('focus', show)
+      link.removeEventListener('focusout', onFocusOut)
+      link.removeEventListener('keydown', onKey)
+    }
+  }, [anchorRef, hide, menuId, show])
+
+  useEffect(() => {
+    if (!open) return
+    const close = () => setOpen(false)
+    window.addEventListener('resize', close)
+    window.addEventListener('scroll', close, true)
+    return () => {
+      window.removeEventListener('resize', close)
+      window.removeEventListener('scroll', close, true)
+    }
+  }, [open])
+
+  useEffect(() => () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current)
+  }, [])
+
+  if (!mounted) return null
+
+  return createPortal(
+    <div
+      id={menuId}
+      role="menu"
+      aria-label="Account"
+      className="adeptimize-account-menu"
+      data-open={open || undefined}
+      style={{ top: position.top, right: position.right }}
+      onMouseEnter={show}
+      onMouseLeave={hide}
+      onFocus={show}
+      onBlur={(e) => !e.currentTarget.contains(e.relatedTarget as Node | null) && hide()}
+      onKeyDown={(e) => e.key === 'Escape' && setOpen(false)}
+    >
+      <div className="adeptimize-account-menu__picture">
+        <Avatar avatar={user.avatar} alt="" size={96} />
+      </div>
+      <div className="adeptimize-account-menu__details">
+        <strong>{user.name}</strong>
+        <span>{user.email}</span>
+        <Link role="menuitem" href={`${admin}/account`} prefetch={false} className="adeptimize-account-menu__item" onClick={() => setOpen(false)} tabIndex={open ? 0 : -1}>
+          Edit Profile
+        </Link>
+        <Link role="menuitem" href={`${admin}/logout`} prefetch={false} className="adeptimize-account-menu__item adeptimize-account-menu__item--logout" tabIndex={open ? 0 : -1}>
+          Log Out
+        </Link>
+      </div>
+    </div>,
+    document.body,
   )
 }

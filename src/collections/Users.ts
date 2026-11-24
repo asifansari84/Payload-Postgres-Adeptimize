@@ -1,4 +1,10 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, FieldAccess } from 'payload'
+
+/** Set once when the account is created; never changed afterwards (UI, popup or API). */
+const fixedAfterCreate: { create: FieldAccess; update: FieldAccess } = {
+  create: () => true,
+  update: () => false,
+}
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -7,6 +13,8 @@ export const Users: CollectionConfig = {
     // Show people by name in the Users list and in pickers like a post's Author.
     useAsTitle: 'displayName',
     defaultColumns: ['avatar', 'name', 'username', 'email', 'updatedAt'],
+    // Clicking a user opens a popup to edit their name and avatar.
+    components: { beforeListTable: ['/components/admin/users/UserEditDialog'] },
   },
   hooks: {
     // Keep "Name (username)" in sync so pickers can tell people with the same name apart.
@@ -34,6 +42,17 @@ export const Users: CollectionConfig = {
       name: 'name',
       type: 'text',
       required: true,
+      maxLength: 100,
+      admin: { components: { Cell: '/components/admin/users/UserCells#NameCell' } },
+      // A name made only of spaces is not a name.
+      hooks: { beforeValidate: [({ value }) => (typeof value === 'string' ? value.trim() : value)] },
+    },
+    // Merged into Payload's built-in login email field: it can't be edited after creation.
+    {
+      name: 'email',
+      type: 'email',
+      access: fixedAfterCreate,
+      admin: { description: 'Cannot be changed after the account is created.' },
     },
     {
       name: 'username',
@@ -41,7 +60,8 @@ export const Users: CollectionConfig = {
       required: true,
       unique: true,
       index: true,
-      admin: { description: 'Lowercase letters, numbers, dots, dashes and underscores (3–30 characters).' },
+      access: fixedAfterCreate,
+      admin: { description: 'Lowercase letters, numbers, dots, dashes and underscores (3–30 characters). Cannot be changed after the account is created.' },
       hooks: {
         beforeValidate: [({ value }) => (typeof value === 'string' ? value.trim().toLowerCase() : value)],
       },
@@ -64,7 +84,7 @@ export const Users: CollectionConfig = {
       filterOptions: { mimeType: { contains: 'image/' } },
       admin: {
         description: 'Optional profile picture. A placeholder icon is shown when empty.',
-        components: { Cell: '/components/admin/UserAvatar#AvatarCell' },
+        components: { Cell: '/components/admin/users/UserCells#AvatarCell' },
       },
     },
   ],

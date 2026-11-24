@@ -33,7 +33,9 @@ import { FixedToolbarFeatureClient as FixedToolbarFeatureClient_e70f5e05f09f93e0
 import { default as default_314a9a327682c5a5ca5761af49789da5 } from '../../../components/admin/PostSearchPreview'
 import { default as default_37ab194fe8d64aa61bb1bc2922224097 } from '../../../components/admin/MediaCreatedRedirect'
 import { default as default_6f2221712f5b9a9fcb5d9546f7609335 } from '../../../components/admin/leads/LeadsView'
-import { AvatarCell as AvatarCell_47861655001cbf48e6259b36cb95a68a } from '../../../components/admin/UserAvatar'
+import { NameCell as NameCell_dce8199aca1b259851c2add26c06550c } from '../../../components/admin/users/UserCells'
+import { AvatarCell as AvatarCell_dce8199aca1b259851c2add26c06550c } from '../../../components/admin/users/UserCells'
+import { default as default_22c9fc63051ff196157ba30e2673ed00 } from '../../../components/admin/users/UserEditDialog'
 import { LinkRowLabel as LinkRowLabel_a22f15833f5c099d83eec5874403c04c } from '../../../components/admin/RowLabel'
 import { SocialRowLabel as SocialRowLabel_a22f15833f5c099d83eec5874403c04c } from '../../../components/admin/RowLabel'
 import { default as default_47861655001cbf48e6259b36cb95a68a } from '../../../components/admin/UserAvatar'
@@ -82,7 +84,9 @@ export const importMap = {
   "/components/admin/PostSearchPreview#default": default_314a9a327682c5a5ca5761af49789da5,
   "/components/admin/MediaCreatedRedirect#default": default_37ab194fe8d64aa61bb1bc2922224097,
   "/components/admin/leads/LeadsView#default": default_6f2221712f5b9a9fcb5d9546f7609335,
-  "/components/admin/UserAvatar#AvatarCell": AvatarCell_47861655001cbf48e6259b36cb95a68a,
+  "/components/admin/users/UserCells#NameCell": NameCell_dce8199aca1b259851c2add26c06550c,
+  "/components/admin/users/UserCells#AvatarCell": AvatarCell_dce8199aca1b259851c2add26c06550c,
+  "/components/admin/users/UserEditDialog#default": default_22c9fc63051ff196157ba30e2673ed00,
   "/components/admin/RowLabel#LinkRowLabel": LinkRowLabel_a22f15833f5c099d83eec5874403c04c,
   "/components/admin/RowLabel#SocialRowLabel": SocialRowLabel_a22f15833f5c099d83eec5874403c04c,
   "/components/admin/UserAvatar#default": default_47861655001cbf48e6259b36cb95a68a,

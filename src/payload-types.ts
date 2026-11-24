@@ -1453,9 +1453,12 @@ export interface User {
   avatar?: (number | null) | Media;
   updatedAt: string;
   createdAt: string;
+  /**
+   * Cannot be changed after the account is created.
+   */
   email: string;
   /**
-   * Lowercase letters, numbers, dots, dashes and underscores (3–30 characters).
+   * Lowercase letters, numbers, dots, dashes and underscores (3–30 characters). Cannot be changed after the account is created.
    */
   username: string;
   resetPasswordToken?: string | null;

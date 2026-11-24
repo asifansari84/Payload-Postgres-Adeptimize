@@ -72,3 +72,36 @@
     margin-block-start: 1.85rem;
   }
 }
+
+/* Hover: the number fills in and the card nudges up. */
+.card {
+  transition: transform 400ms var(--ease-out);
+}
+
+.number {
+  transition: color 300ms ease;
+}
+
+@media (hover: hover) {
+  .card:hover {
+    transform: translateY(-0.25rem);
+  }
+
+  .card:hover .number {
+    color: var(--color-green);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .number {
+    transition: none;
+  }
+}
+
+/* Phones: the content below is left-aligned, so the heading is too. */
+@media (max-width: 47.99rem) {
+  .title {
+    text-align: start;
+  }
+}

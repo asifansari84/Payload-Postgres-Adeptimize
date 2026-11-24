@@ -16,11 +16,12 @@ export default async function LocationsPage() {
 
   const slides = locations
     .filter((l) => l.slideImage)
-    .map((l) => ({
+    .map((l, i) => ({
       id: l.id,
       title: l.title,
       href: locationPath(l.slug),
-      image: <MediaImage media={l.slideImage} alt="" sizes="100vw" />,
+      // The first slide is the largest thing on screen at load (LCP).
+      image: <MediaImage media={l.slideImage} alt="" sizes="100vw" preload={i === 0} />,
       icon: l.slideIcon ? <MediaImage media={l.slideIcon} alt="" sizes="6rem" /> : undefined,
       animation: l.slideIconAnimation,
     }))

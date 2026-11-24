@@ -18,6 +18,7 @@
 .panel {
   --surface: var(--color-navy);
   position: relative;
+  min-inline-size: 0;
   padding-block: 5rem 3.75rem;
   border-radius: 1.25rem 1.25rem 0 0;
   background: var(--surface);
@@ -34,6 +35,8 @@
 
 .inner {
   display: grid;
+  /* The single-column layout must never be widened by a long word. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 1.5rem;
   max-inline-size: 77.375rem;
   margin-inline: auto;
@@ -76,6 +79,9 @@
 
 .figure {
   position: relative;
+  /* Hug the photo: as a stretched grid item the figure grew to the height of
+     the text column and the tag drifted below the picture. */
+  align-self: start;
 }
 
 .image {
@@ -87,10 +93,11 @@
 
 .tag {
   position: absolute;
-  inset-block-end: -0.25rem;
-  inset-inline-start: -0.0625rem;
+  /* Flush with the photo's bottom-left corner, following its rounding. */
+  inset-block-end: 0;
+  inset-inline-start: 0;
   padding: 0.9375rem 1.875rem 0.625rem 1.5625rem;
-  border-radius: 0 1.25rem 0 0;
+  border-radius: 0 1.25rem 0 var(--radius-lg);
   background: var(--color-green);
   line-height: 1.58;
 }
@@ -150,18 +157,33 @@
   }
 }
 
-/* Panels pin and stack while scrolling on large screens. */
-@media (min-width: 64rem) and (min-height: 43.75rem) and (prefers-reduced-motion: no-preference) {
-  .panels {
+/*
+ * Panels pin and stack while scrolling, on every screen size. The motion
+ * engine measures each panel (--panel-h) and then sets data-stack-ready. A
+ * panel that fits the screen sticks at the top; a taller one (phones) first
+ * scrolls fully into view and then sticks by its bottom edge, so nothing is
+ * covered before it can be read. Without JS or with reduced motion the
+ * panels simply scroll.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .panels[data-stack-ready] {
     isolation: isolate;
   }
 
-  .panel {
+  .panels[data-stack-ready] .panel {
     position: sticky;
-    inset-block-start: 0;
+    inset-block-start: min(0px, calc(100svh - var(--panel-h, 100svh)));
   }
 
-  .panel:last-child {
+  .panels[data-stack-ready] .panel:last-child {
     position: relative;
+  }
+}
+
+
+/* Phones: the content below is left-aligned, so the heading is too. */
+@media (max-width: 47.99rem) {
+  .title {
+    text-align: start;
   }
 }

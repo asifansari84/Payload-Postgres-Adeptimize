@@ -1,5 +1,6 @@
 import type { HeroBlock, Page } from '@/payload-types'
-import { Highlight, MediaImage } from '../ui/helpers'
+import { MediaImage } from '../ui/helpers'
+import { SplitWords } from '../ui/SplitWords'
 import styles from './Hero.module.css'
 
 type HomeHero = NonNullable<Page['hero']>
@@ -10,10 +11,10 @@ export function Hero({ block, nextId }: { block: HeroData; nextId?: string }) {
     <section className={styles.hero} aria-labelledby={`${block.id}-title`}>
       <div className="container">
         <hgroup className={styles.heading}>
-          <h1 id={`${block.id}-title`} className={styles.title}>
-            <Highlight text={block.title.includes('*') ? block.title : `*${block.title}*`} />
+          <h1 id={`${block.id}-title`} className={`${styles.title} split-load`}>
+            <SplitWords text={block.title.includes('*') ? block.title : `*${block.title}*`} />
           </h1>
-          {block.subtitle && <p className={styles.subtitle}>{block.subtitle}</p>}
+          {block.subtitle && <p className={`${styles.subtitle} fade-load`}>{block.subtitle}</p>}
         </hgroup>
 
         <div className={styles.highlights}>
@@ -31,8 +32,9 @@ export function Hero({ block, nextId }: { block: HeroData; nextId?: string }) {
         {block.image && <MediaImage
           media={block.image}
           className={styles.image}
+          data-scrub="recede"
           sizes="(min-width: 1440px) 1400px, calc(100vw - 2.5rem)"
-          priority
+          preload
         />}
       </div>
     </section>

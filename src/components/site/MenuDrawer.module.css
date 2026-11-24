@@ -121,13 +121,18 @@
   background: none;
   color: var(--color-white);
   font-family: var(--font-display);
-  font-size: 25px;
+  font-size: clamp(1.25rem, 0.95rem + 1.5vw, 1.5625rem);
   font-weight: 400;
   line-height: 1.2;
   text-align: start;
   text-transform: uppercase;
-  white-space: nowrap;
-  transition: color 200ms ease;
+  transition: color 200ms ease, translate 300ms var(--ease-out);
+}
+
+@media (hover: hover) {
+  .link:hover {
+    translate: 0.35em 0;
+  }
 }
 
 .link:hover,
@@ -193,6 +198,7 @@
 
 .submenu a {
   display: inline-block;
+  padding-block: 0.3rem;
   font-size: 14px;
   font-weight: 300;
   line-height: 30px;
@@ -324,9 +330,12 @@ a.chat:hover .round {
     display: none;
   }
 
+  /* Icon first, then the number, lined up on the left like the chat row.
+     (In a reversed row, flex-end is the left edge.) */
   .contact {
-    justify-content: flex-start;
+    justify-content: flex-end;
     flex-direction: row-reverse;
+    gap: 1.25rem;
   }
 
   .contactText {
@@ -336,9 +345,17 @@ a.chat:hover .round {
 }
 
 @media (min-width: 48rem) {
+  /* Both columns fit their content: the first is as wide as the phone/email
+     row (so the call button never slides under the second image, and the image
+     below lines up on its right), the second as wide as the chat row. */
   .panel {
-    grid-template-columns: repeat(2, minmax(0, 14rem));
+    grid-template-columns: auto auto;
+    justify-content: start;
     gap: 2.5rem;
+  }
+
+  .column:first-child {
+    justify-items: end;
   }
 
   .column {
@@ -354,11 +371,43 @@ a.chat:hover .round {
   .link {
     margin-block: 15px;
     font-size: 35px;
+    white-space: nowrap;
   }
 }
 
-/* Side-by-side once there is room for one-line links beside the panel. */
-@media (min-width: 75rem) {
+/* Opening: links cascade up one after another, then the contact panel and
+   social row settle in. */
+@media (prefers-reduced-motion: no-preference) {
+  .drawer[open] .links > li,
+  .drawer[open] .panel,
+  .drawer[open] .social {
+    opacity: 1;
+    translate: 0 0;
+    transition: opacity 500ms ease, translate 700ms var(--ease-out);
+    transition-delay: calc(120ms + var(--i, 0) * 60ms);
+  }
+
+  .drawer[open] .panel {
+    --i: 4;
+  }
+
+  .drawer[open] .social {
+    --i: 6;
+  }
+
+  @starting-style {
+    .drawer[open] .links > li,
+    .drawer[open] .panel,
+    .drawer[open] .social {
+      opacity: 0;
+      translate: 0 1.5rem;
+    }
+  }
+}
+
+/* Side-by-side once there is room for one-line links beside the full panel
+   (slightly tighter spacing until 90rem so the panel always fits). */
+@media (min-width: 80rem) {
   .inner {
     grid-template-columns: max-content auto;
     justify-content: space-between;
@@ -367,6 +416,21 @@ a.chat:hover .round {
       'top top'
       'nav panel'
       'social social';
+    column-gap: 3rem;
+    padding: 4.5rem 2.5rem 3.5rem;
+  }
+
+  .nav {
+    padding-inline-start: clamp(1rem, 9vw - 5rem, 13.5rem);
+  }
+
+  .panel {
+    align-self: center;
+  }
+}
+
+@media (min-width: 90rem) {
+  .inner {
     column-gap: 4rem;
     padding: 4.5rem 4rem 3.5rem;
   }
@@ -376,7 +440,6 @@ a.chat:hover .round {
   }
 
   .panel {
-    align-self: center;
     padding-inline-end: clamp(0rem, 5vw, 6rem);
   }
 }
@@ -387,7 +450,8 @@ a.chat:hover .round {
   .chevron,
   .round,
   .submenuWrap,
-  .submenu li {
+  .submenu li,
+  .link {
     transition: none;
   }
 }

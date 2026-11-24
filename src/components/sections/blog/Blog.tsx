@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { LinkJSXConverter, RichText, type JSXConvertersFunction } from '@payloadcms/richtext-lexical/react'
 import type { Post } from '@/payload-types'
 import { postAuthorName, postHref, postImage, postMetadata } from '@/lib/postMetadata'
+import { SplitWords } from '../../ui/SplitWords'
 import styles from './Blog.module.css'
 
 const dateFormat = new Intl.DateTimeFormat('en-US', {
@@ -51,9 +52,9 @@ export function BlogArticle({ post }: { post: Post }) {
             <svg aria-hidden="true" viewBox="0 0 12 12" width="10" height="10"><path d="M10 6H2m3-3L2 6l3 3" /></svg>
             All blogs
           </Link>
-          <h1 className={styles.articleTitle}>{post.title}</h1>
-          <p className={styles.byline}><span>{author}</span><PostDate date={post.publishedAt} /></p>
-          {post.excerpt && <p className={styles.excerpt}>{post.excerpt}</p>}
+          <h1 className={`${styles.articleTitle} split-load`}><SplitWords text={post.title.replaceAll('*', '')} /></h1>
+          <p className={`${styles.byline} fade-load`}><span>{author}</span><PostDate date={post.publishedAt} /></p>
+          {post.excerpt && <p className={`${styles.excerpt} fade-load`}>{post.excerpt}</p>}
         </header>
         {image && (
           // eslint-disable-next-line @next/next/no-img-element -- media sizes vary per post
@@ -73,15 +74,23 @@ export function BlogIndex({ posts, page, totalPages }: { posts: BlogCardPost[]; 
       <div className="container">
         {!posts.length && <p className={styles.empty}>No published posts yet.</p>}
         <ul className={styles.grid} role="list">
-          {posts.map((post) => {
+          {posts.map((post, index) => {
             const image = postImage(post.featuredImage)
             const url = postHref(post.slug)
             return (
               <li key={post.id} className={`${styles.card} reveal`}>
                 {image && (
                   <Link href={url} tabIndex={-1} aria-hidden="true" className={styles.cardMedia}>
+                    {/* The first row is above the fold (and the LCP), so it loads straight away. */}
                     {/* eslint-disable-next-line @next/next/no-img-element -- media sizes vary per post */}
-                    <img loading="lazy" src={image.url} alt="" width={image.width ?? undefined} height={image.height ?? undefined} />
+                    <img
+                      loading={index < 3 ? 'eager' : 'lazy'}
+                      fetchPriority={index === 0 ? 'high' : undefined}
+                      src={image.url}
+                      alt=""
+                      width={image.width ?? undefined}
+                      height={image.height ?? undefined}
+                    />
                   </Link>
                 )}
                 <div className={styles.cardBody}>

@@ -3,6 +3,28 @@
   inset-block-start: 0;
   z-index: 30;
   background: var(--color-sky);
+  transition: translate 450ms var(--ease-out);
+}
+
+/* Soft shadow once the page scrolls (opacity only, so it stays cheap). */
+.header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  box-shadow: 0 0.5rem 1.5rem -0.75rem rgb(7 54 83 / 0.25);
+  opacity: 0;
+  transition: opacity 300ms ease;
+  pointer-events: none;
+}
+
+.header[data-scrolled]::before {
+  opacity: 1;
+}
+
+/* Slides away while reading down, returns on any scroll up or keyboard focus. */
+.header[data-hidden]:not(:focus-within) {
+  translate: 0 -100%;
 }
 
 .bar {
@@ -11,7 +33,13 @@
   justify-content: space-between;
   gap: 1rem;
   min-block-size: var(--header-height);
-  padding-inline: 2.5rem;
+}
+
+/* Phones line the logo up with the page content; wider screens keep the inset. */
+@media (min-width: 48rem) {
+  .bar {
+    padding-inline: 2.5rem;
+  }
 }
 
 .logo img {
@@ -25,6 +53,9 @@
 }
 
 .button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: none;
   align-items: center;
   gap: 0.9rem;
@@ -36,18 +67,54 @@
   font-weight: 700;
   line-height: 1.2;
   text-transform: uppercase;
-  transition: background-color 200ms ease, color 200ms ease;
+  transition: color 350ms var(--ease-out), scale 150ms ease;
+}
+
+/* Same fill sweep as the global .button. */
+.button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--color-navy);
+  transform: scaleX(0);
+  transform-origin: 100% 50%;
+  transition: transform 450ms var(--ease-out);
 }
 
 .button svg {
   fill: none;
   stroke: currentColor;
   stroke-width: 2;
+  transition: translate 300ms var(--ease-out);
 }
 
-.button:hover {
-  background: var(--color-navy);
+.button:hover,
+.button:focus-visible {
   color: var(--color-white);
+}
+
+.button:hover::before,
+.button:focus-visible::before {
+  transform: scaleX(1);
+  transform-origin: 0 50%;
+}
+
+.button:hover svg {
+  translate: 0.25em 0;
+}
+
+.button:active {
+  scale: 0.97;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header,
+  .button,
+  .button::before,
+  .button svg {
+    transition: none;
+  }
 }
 
 @media (min-width: 64rem) {

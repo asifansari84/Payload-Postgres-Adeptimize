@@ -114,3 +114,63 @@
     inline-size: 100%;
   }
 }
+
+/* The accent sits in a wrapper so its pop-in does not fight its centring. */
+.accentWrap {
+  position: absolute;
+  inset: 24% 0 auto;
+}
+
+.accentWrap .accent {
+  position: static;
+  margin-inline: auto;
+  translate: none;
+}
+
+/* ---------- Motion (desktop, scroll-linked) ---------- */
+
+@supports (animation-timeline: view()) {
+  @media (min-width: 64rem) and (hover: hover) and (prefers-reduced-motion: no-preference) {
+    /* A soft glow drifts across the section as it passes. */
+    .section {
+      position: relative;
+      isolation: isolate;
+      overflow: clip;
+    }
+
+    .section::before {
+      content: '';
+      position: absolute;
+      inset-block-start: 10%;
+      inset-inline-start: 50%;
+      z-index: -1;
+      inline-size: 60rem;
+      aspect-ratio: 1;
+      margin-inline-start: -30rem;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgb(79 225 138 / 0.12), transparent);
+      animation: glow linear both;
+      animation-timeline: view();
+      pointer-events: none;
+    }
+
+  }
+}
+
+@keyframes glow {
+  from {
+    translate: -25% -10%;
+  }
+  to {
+    translate: 25% 30%;
+  }
+}
+
+
+/* Phones: the content below is left-aligned, so the heading is too. */
+@media (max-width: 47.99rem) {
+  .title {
+    text-align: start;
+    padding-inline-start: 0;
+  }
+}

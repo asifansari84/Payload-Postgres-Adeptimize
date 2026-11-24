@@ -12,6 +12,7 @@
   display: grid;
   place-items: center;
   min-block-size: 80vh;
+  min-block-size: 80svh;
   overflow: hidden;
   background: var(--color-navy);
   color: var(--color-white);
@@ -87,7 +88,16 @@
 }
 
 .lead {
-  max-inline-size: 73%;
+  max-inline-size: 36rem;
+}
+
+@media (min-width: 48rem) {
+  .lead {
+    max-inline-size: 73%;
+  }
+}
+
+.lead {
   color: #0d0d0d;
 }
 
@@ -258,6 +268,18 @@
   rotate: 270deg;
 }
 
+.badgeLink {
+  transition: scale 300ms var(--ease-out);
+}
+
+.badgeLink:hover {
+  scale: 1.06;
+}
+
+.badgeLink:active {
+  scale: 0.96;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .badgeRing {
     animation: spin 14s linear infinite;
@@ -282,3 +304,23 @@
     inline-size: 120px;
   }
 }
+
+/* ---------- Motion ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* The banner photo settles from a slight zoom as the page opens. */
+  .bannerImage {
+    animation: settle 2200ms var(--ease-out) both;
+  }
+
+  .counterValue {
+    transition: scale 300ms var(--ease-out);
+  }
+}
+
+@keyframes settle {
+  from {
+    scale: 1.12;
+  }
+}
+

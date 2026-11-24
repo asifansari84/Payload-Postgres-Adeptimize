@@ -63,15 +63,45 @@
 
 .input {
   inline-size: 100%;
+  min-block-size: 2.75rem;
   padding: 0.8rem 1rem;
   border: 1px solid var(--color-muted);
   border-radius: var(--radius-sm);
   background: var(--color-surface);
+  transition: border-color 250ms ease, box-shadow 250ms ease, background-color 250ms ease;
 }
 
+.input:hover {
+  border-color: var(--color-subtle);
+}
+
+/* Focus: a soft green ring grows around the field. */
 .input:focus-visible {
   border-color: var(--color-navy);
-  outline-offset: 0;
+  outline: none;
+  background: var(--color-white);
+  box-shadow: 0 0 0 3px rgb(79 225 138 / 0.45);
+}
+
+/* Validation only after the visitor has interacted with the field. */
+.input:user-invalid {
+  border-color: #c0392b;
+  box-shadow: 0 0 0 3px rgb(192 57 43 / 0.15);
+}
+
+.field label {
+  transition: color 250ms ease;
+}
+
+.field:focus-within label {
+  color: var(--color-green-dark);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .input,
+  .field label {
+    transition: none;
+  }
 }
 
 textarea.input {
@@ -119,6 +149,12 @@ textarea.input {
   .introLayout {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
     gap: 4rem;
+  }
+
+  /* The intro stays in view while the (longer) form scrolls past. */
+  .introText {
+    position: sticky;
+    inset-block-start: calc(var(--header-height) + 2rem);
   }
 }
 
@@ -199,6 +235,14 @@ textarea.input {
   padding: 2rem;
   border-radius: var(--radius-md);
   background: var(--surface);
+  transition: transform 400ms var(--ease-out), box-shadow 400ms var(--ease-out);
+}
+
+@media (hover: hover) {
+  .step:hover {
+    transform: translateY(-0.35rem);
+    box-shadow: 0 1.25rem 2.5rem -1.5rem rgb(7 54 83 / 0.3);
+  }
 }
 
 .stepNumber {
@@ -225,6 +269,7 @@ textarea.input {
 
 .ctaLayout {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 2.5rem;
   align-items: center;
 }
@@ -246,11 +291,23 @@ textarea.input {
   font-weight: 700;
   text-decoration: underline;
   text-underline-offset: 0.2em;
+  overflow-wrap: anywhere;
+}
+
+.detailGrid a {
+  overflow-wrap: anywhere;
 }
 
 @media (min-width: 64rem) {
   .ctaLayout {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 4rem;
+  }
+}
+
+/* Phones: the content below is left-aligned, so the heading is too. */
+@media (max-width: 47.99rem) {
+  .center {
+    text-align: start;
   }
 }

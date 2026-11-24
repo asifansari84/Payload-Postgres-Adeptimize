@@ -1,4 +1,4 @@
-import { Highlight } from '../ui/helpers'
+import { SplitWords } from '../ui/SplitWords'
 import styles from './PageHeader.module.css'
 
 type PageHeaderData = { eyebrow?: string | null; title?: string | null; intro?: string | null } | null | undefined
@@ -9,9 +9,9 @@ export function PageHeader({ data, fallback }: { data: PageHeaderData; fallback:
   return (
     <header className={styles.header}>
       <div className="container">
-        {data?.eyebrow && <p className={`${styles.eyebrow} outline-text`} aria-hidden="true">{data.eyebrow}</p>}
-        <h1 className={styles.title}><Highlight text={title} /></h1>
-        {data?.intro && <p className={styles.intro}>{data.intro}</p>}
+        {data?.eyebrow && <p className={`${styles.eyebrow} outline-text outline-load`} aria-hidden="true">{data.eyebrow}</p>}
+        <h1 className={`${styles.title} split-load`}><SplitWords text={title} /></h1>
+        {data?.intro && <p className={`${styles.intro} fade-load`}>{data.intro}</p>}
       </div>
     </header>
   )

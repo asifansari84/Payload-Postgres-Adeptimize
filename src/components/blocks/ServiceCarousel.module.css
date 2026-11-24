@@ -59,6 +59,32 @@
   border-radius: var(--radius-md);
   background: var(--color-white);
   scroll-snap-align: start;
+  transition: transform 450ms var(--ease-out), box-shadow 450ms var(--ease-out);
+}
+
+.media {
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
+@media (hover: hover) {
+  .card:hover {
+    transform: translateY(-0.5rem);
+    box-shadow: 0 1.5rem 2.5rem -1.5rem rgb(7 54 83 / 0.35);
+  }
+
+  .card:hover .image {
+    scale: 1.06;
+  }
+
+  .card:hover .number {
+    background: var(--color-green);
+    color: var(--color-navy);
+  }
+}
+
+.card:active {
+  transform: scale(0.98);
 }
 
 /* Every other card flips: image first, number badge at the bottom. */
@@ -84,6 +110,7 @@
   font-size: 1rem;
   font-weight: 500;
   translate: -50% 0;
+  transition: background-color 300ms ease, color 300ms ease;
 }
 
 .card:nth-child(even) .number {
@@ -118,6 +145,16 @@
   aspect-ratio: 281 / 334;
   border-radius: var(--radius-md);
   object-fit: cover;
+  transition: scale 700ms var(--ease-out);
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .image,
+  .number {
+    transition: none;
+  }
 }
 
 @media (min-width: 64rem) {
@@ -127,5 +164,12 @@
 
   .track {
     grid-auto-columns: 20.6875rem;
+  }
+}
+
+/* Phones: the content below is left-aligned, so the heading is too. */
+@media (max-width: 47.99rem) {
+  .title {
+    text-align: start;
   }
 }

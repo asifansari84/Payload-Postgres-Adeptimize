@@ -1,5 +1,6 @@
 import type { Form, Page } from '@/payload-types'
 import { Highlight, MediaImage, pad } from '../../ui/helpers'
+import { SplitWords } from '../../ui/SplitWords'
 import styles from './Contact.module.css'
 import { ContactFormStatus } from './ContactFormStatus'
 
@@ -50,12 +51,12 @@ export function ContactIntro({ data, form }: { data: Section<'contactIntro'>; fo
   return (
     <section className={styles.intro} aria-labelledby="contact-intro-title">
       <div className={`container ${styles.introLayout}`}>
-        <div className={`${styles.introText} reveal`}>
+        <div className={`${styles.introText} reveal`} data-reveal="side">
           <h2 id="contact-intro-title" className={styles.display}><Highlight text={data.heading} /></h2>
           {data.subheading && <p className={styles.subheading}>{data.subheading}</p>}
           {paragraphs(data.text).map((text, index) => <p key={index}>{text}</p>)}
         </div>
-        <div id="contact-form" className={`${styles.formCard} reveal`}>
+        <div id="contact-form" className={`${styles.formCard} reveal`} data-reveal="side">
           <ContactForm form={form} />
         </div>
       </div>
@@ -68,7 +69,7 @@ export function ContactDetails({ data }: { data: NonNullable<Details> }) {
   return (
     <section className={styles.details} aria-labelledby="contact-details-title">
       <div className="container">
-        <h2 id="contact-details-title" className={`${styles.display} ${styles.light} reveal`}><Highlight text={data.heading} /></h2>
+        <h2 id="contact-details-title" className={`${styles.display} ${styles.light} split`}><SplitWords text={data.heading} /></h2>
         <dl className={styles.detailGrid}>
           {data.address && (
             <div className="reveal">
@@ -99,6 +100,7 @@ export function ContactDetails({ data }: { data: NonNullable<Details> }) {
         {mapQuery && (
           <iframe
             className={`${styles.map} reveal`}
+            data-reveal="fade"
             title={`Map showing ${mapQuery}`}
             src={`https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=15&output=embed`}
             loading="lazy"
@@ -114,11 +116,11 @@ export function ContactExpect({ data }: { data: Section<'contactExpect'> }) {
   return (
     <section className={styles.expect} aria-labelledby="contact-expect-title">
       <div className="container">
-        <h2 id="contact-expect-title" className={`${styles.display} ${styles.center} reveal`}><Highlight text={data.heading} /></h2>
+        <h2 id="contact-expect-title" className={`${styles.display} ${styles.center} split`}><SplitWords text={data.heading} /></h2>
         {!!data.items?.length && (
           <ol className={styles.steps} role="list">
             {data.items.map((item, index) => (
-              <li key={item.id} className={`${styles.step} reveal`}>
+              <li key={item.id} className={`${styles.step} reveal`} data-outline>
                 <span className={`${styles.stepNumber} outline-text`} aria-hidden="true">{pad(index)}</span>
                 <h3>{item.title}</h3>
                 <p>{item.text}</p>
@@ -135,8 +137,8 @@ export function ContactCta({ data, details }: { data: Section<'contactCta'>; det
   return (
     <section className={styles.cta} aria-labelledby="contact-cta-title">
       <div className={`container ${styles.ctaLayout}`}>
-        {data.image && <MediaImage media={data.image} alt="" className={`${styles.ctaImage} reveal`} sizes="(min-width: 64rem) 34rem, 100vw" />}
-        <div className={`${styles.ctaText} reveal`}>
+        {data.image && <MediaImage media={data.image} alt="" className={`${styles.ctaImage} reveal`} data-reveal="clip" sizes="(min-width: 64rem) 34rem, 100vw" />}
+        <div className={`${styles.ctaText} reveal`} data-reveal="right">
           <h2 id="contact-cta-title" className={styles.display}><Highlight text={data.heading} /></h2>
           {data.text && <p>{data.text}</p>}
           {(details?.phone || details?.email) && (

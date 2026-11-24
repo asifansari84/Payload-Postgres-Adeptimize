@@ -43,6 +43,11 @@
   inline-size: 100%;
   block-size: 100%;
   object-fit: cover;
+  transition: scale 800ms var(--ease-out);
+}
+
+.item:hover .image {
+  scale: 1.05;
 }
 
 @media (min-width: 64rem) {
@@ -63,7 +68,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .item {
+  .item,
+  .image {
     transition: none;
   }
 }

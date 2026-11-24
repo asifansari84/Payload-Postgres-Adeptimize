@@ -1,5 +1,6 @@
 import type { ServiceCarouselBlock } from '@/payload-types'
-import { CMSLink, Highlight, linkHref, MediaImage, pad, plainText } from '../ui/helpers'
+import { CMSLink, linkHref, MediaImage, pad, plainText } from '../ui/helpers'
+import { SplitWords } from '../ui/SplitWords'
 import { CarouselTrack } from './CarouselTrack'
 import styles from './ServiceCarousel.module.css'
 
@@ -12,24 +13,26 @@ export function ServiceCarousel({ block, stacked = false }: { block: ServiceCaro
     <section className={styles.section} aria-labelledby={`${block.id}-title`}>
       <div className="container">
         {stacked ? (
-          <h2 id={`${block.id}-title`} className={`${styles.stackedTitle} reveal`}>
-            <span className={`${styles.stackedOutline} outline-text`}>{block.heading.match(/\*([^*]+)\*/)?.[1]}</span>
+          <h2 id={`${block.id}-title`} className={`${styles.stackedTitle} reveal`} data-outline>
+            <span className={`${styles.stackedOutline} outline-text`} data-drift="1">{block.heading.match(/\*([^*]+)\*/)?.[1]}</span>
             <span className={styles.stackedSolid}>{block.heading.replace(/\*[^*]+\*/, '').trim()}</span>
           </h2>
         ) : (
-          <h2 id={`${block.id}-title`} className={`${styles.title} reveal`}><Highlight text={block.heading} /></h2>
+          <h2 id={`${block.id}-title`} className={`${styles.title} split`}><SplitWords text={block.heading} /></h2>
         )}
       </div>
       <CarouselTrack className={styles.track} label={plainText(block.heading)}>
         {block.services.map((service, index) => (
-          <li key={service.id} className={styles.card}>
+          <li key={service.id} className={`${styles.card} reveal`}>
             <span className={styles.number} aria-hidden="true">{pad(index)}</span>
             <h3 className={styles.cardTitle}>
               {linkHref(service.link)
                 ? <CMSLink link={service.link} className={styles.link}>{service.title}</CMSLink>
                 : service.title}
             </h3>
-            <MediaImage media={service.image} alt="" className={styles.image} sizes="17.5rem" />
+            <div className={styles.media}>
+              <MediaImage media={service.image} alt="" className={styles.image} sizes="17.5rem" />
+            </div>
           </li>
         ))}
       </CarouselTrack>

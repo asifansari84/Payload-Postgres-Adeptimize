@@ -14,9 +14,9 @@ export function SiteFooter({ footer }: { footer: Footer | null }) {
       <div className={`container ${styles.grid}`}>
         <section className={styles.cta} aria-label="Start a project">
           {footer.logo && <MediaImage media={footer.logo} alt="Adeptimize" className={styles.logo} sizes="20.75rem" />}
-          <p className={styles.headline}>
-            <span className={`${styles.eyebrow} outline-text`}>{footer.ctaEyebrow}</span>
-            <span className={styles.row}>
+          <p className={styles.headline} data-outline>
+            <span className={`${styles.eyebrow} outline-text`} data-drift="-1">{footer.ctaEyebrow}</span>
+            <span className={`${styles.row} reveal`}>
               <span className={styles.big}>{footer.ctaTitle}</span>
               <span className={styles.aside}>{footer.ctaAside}</span>
             </span>
@@ -37,7 +37,7 @@ export function SiteFooter({ footer }: { footer: Footer | null }) {
 
         <div className={styles.columns}>
           {footer.columns?.map((column) => (
-            <nav key={column.id} aria-label={column.title}>
+            <nav key={column.id} aria-label={column.title} className="reveal">
               <h2 className={styles.heading}>{column.title}</h2>
               <ul role="list">
                 {column.links?.map((item) => (
@@ -47,7 +47,7 @@ export function SiteFooter({ footer }: { footer: Footer | null }) {
             </nav>
           ))}
 
-          <div className={styles.contact}>
+          <div className={`${styles.contact} reveal`}>
             {!!footer.hours?.length && (
               <>
                 <h2 className={styles.heading}>{footer.hoursTitle}</h2>

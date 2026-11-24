@@ -1,5 +1,6 @@
 .footer {
   --surface: var(--color-navy);
+  overflow-x: clip;
   padding-block: 5rem 3rem;
   background: var(--surface);
   color: var(--color-muted);
@@ -31,8 +32,9 @@
 
 .row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
+  gap: 0.25rem 1rem;
 }
 
 .big {
@@ -62,22 +64,32 @@
 }
 
 .social a {
+  position: relative;
   display: grid;
   place-items: center;
   inline-size: 1.75rem;
   aspect-ratio: 1;
   color: var(--color-white);
   fill: currentColor;
-  transition: color 200ms ease;
+  transition: color 200ms ease, translate 250ms var(--ease-out);
 }
 
 .social a:hover {
   color: var(--color-green);
+  translate: 0 -2px;
+}
+
+/* 44px touch target around the small icon. */
+.social a::after,
+.newsletter button::after {
+  content: '';
+  position: absolute;
+  inset: -0.5rem;
 }
 
 .columns {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
   gap: 2.5rem 1.25rem;
 }
 
@@ -90,11 +102,24 @@
 
 .link {
   display: block;
-  transition: color 200ms ease;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  padding-block: 0.2rem;
+  overflow-wrap: anywhere;
+  /* Underline that draws in from the left on hover. */
+  background: linear-gradient(currentColor, currentColor) 0 calc(100% - 0.1rem) / 0% 1px no-repeat;
+  transition: color 200ms ease, background-size 350ms var(--ease-out);
 }
 
 .link:hover {
   color: var(--color-white);
+  background-size: 100% 1px;
+}
+
+@media (pointer: coarse) {
+  .link {
+    padding-block: 0.45rem;
+  }
 }
 
 .hours {
@@ -119,8 +144,18 @@
   padding: 0 2.75rem 0.7rem 0;
   border: 0;
   border-block-end: 1px solid var(--color-muted);
-  background: transparent;
+  /* A green underline grows across on focus. */
+  background: linear-gradient(var(--color-green), var(--color-green)) 0 100% / 0% 2px no-repeat;
   color: var(--color-white);
+  transition: background-size 450ms var(--ease-out);
+}
+
+.newsletter input[type='email']:focus-visible {
+  background-size: 100% 2px;
+}
+
+.newsletter input[type='email']:user-invalid {
+  border-block-end-color: #ff8a8a;
 }
 
 .newsletter input::placeholder {
@@ -144,12 +179,28 @@
   border-radius: 50%;
   background: var(--color-navy);
   color: var(--color-white);
+  transition: background-color 250ms ease, color 250ms ease, scale 150ms ease;
+}
+
+.newsletter button:hover,
+.newsletter button:focus-visible {
+  background: var(--color-green);
+  color: var(--color-navy);
+}
+
+.newsletter button:active {
+  scale: 0.9;
 }
 
 .newsletter button svg {
   fill: none;
   stroke: currentColor;
   stroke-width: 2;
+  transition: translate 250ms var(--ease-out);
+}
+
+.newsletter button:hover svg {
+  translate: 1px -1px;
 }
 
 .copyright {
@@ -167,13 +218,30 @@
     gap: 1rem 2rem;
   }
 
+  /* Two by two until there is room for four columns beside the CTA. */
   .columns {
-    grid-template-columns: repeat(4, minmax(0, 13.4rem));
+    grid-template-columns: repeat(2, minmax(0, 13.4rem));
     justify-content: end;
   }
 
   .bottom {
     grid-column: 1 / -1;
     padding-inline-start: 22.6rem;
+  }
+}
+
+@media (min-width: 80rem) {
+  .columns {
+    grid-template-columns: repeat(4, minmax(0, 13.4rem));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link,
+  .social a,
+  .newsletter input[type='email'],
+  .newsletter button,
+  .newsletter button svg {
+    transition: none;
   }
 }

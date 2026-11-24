@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { Header } from '@/payload-types'
 import { CMSLink, MediaImage } from '../ui/helpers'
+import { HeaderFrame } from './HeaderFrame'
 import { MenuDrawer } from './MenuDrawer'
 import styles from './SiteHeader.module.css'
 
@@ -10,10 +11,10 @@ const Arrow = () => (
 
 export function SiteHeader({ header }: { header: Header | null }) {
   return (
-    <header className={styles.header}>
+    <HeaderFrame className={styles.header}>
       <div className={`container ${styles.bar}`}>
         <Link href="/" className={styles.logo} aria-label="Adeptimize home">
-          {header?.logo ? <MediaImage media={header.logo} alt="" priority sizes="9.25rem" /> : 'Adeptimize'}
+          {header?.logo ? <MediaImage media={header.logo} alt="" preload sizes="9.25rem" /> : 'Adeptimize'}
         </Link>
         <div className={styles.actions}>
           {header?.buttons?.map((item) => (
@@ -27,6 +28,6 @@ export function SiteHeader({ header }: { header: Header | null }) {
           />
         </div>
       </div>
-    </header>
+    </HeaderFrame>
   )
 }

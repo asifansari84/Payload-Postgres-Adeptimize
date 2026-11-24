@@ -20,18 +20,36 @@
   overflow: hidden;
   border-radius: var(--radius-md);
   background: var(--color-white);
-  transition: translate 300ms var(--ease-out), box-shadow 300ms var(--ease-out);
+  transition: transform 400ms var(--ease-out), box-shadow 400ms var(--ease-out);
 }
 
+/* transform (not translate) so the hover lift composes with the scroll reveal. */
 .card:hover {
-  translate: 0 -0.25rem;
+  transform: translateY(-0.35rem);
   box-shadow: 0 1.25rem 2.5rem -1.5rem rgb(7 54 83 / 0.35);
+}
+
+.cardMedia {
+  display: block;
+  overflow: hidden;
 }
 
 .cardMedia img {
   inline-size: 100%;
   aspect-ratio: 16 / 10;
   object-fit: cover;
+  transition: scale 700ms var(--ease-out);
+}
+
+.card:hover .cardMedia img {
+  scale: 1.05;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .cardMedia img {
+    transition: none;
+  }
 }
 
 .cardBody {
@@ -95,6 +113,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  min-block-size: 2.75rem;
   justify-self: start;
   color: var(--color-navy);
   font-size: 0.85rem;
@@ -106,6 +125,11 @@
   fill: none;
   stroke: currentColor;
   stroke-width: 1.5;
+  transition: translate 250ms var(--ease-out);
+}
+
+.back:hover svg {
+  translate: -3px 0;
 }
 
 .articleTitle {
@@ -179,6 +203,18 @@
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 0.2em;
+  overflow-wrap: anywhere;
+}
+
+/* Imported posts can contain wide content; keep it inside the column on phones. */
+.prose :is(table, pre) {
+  display: block;
+  max-inline-size: 100%;
+  overflow-x: auto;
+}
+
+.prose :is(iframe, video, embed) {
+  max-inline-size: 100%;
 }
 
 .prose img {

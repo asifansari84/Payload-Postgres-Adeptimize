@@ -1,5 +1,6 @@
 import type { Page } from '@/payload-types'
 import { CMSLink, Highlight, linkHref, MediaImage } from '../../ui/helpers'
+import { SplitWords } from '../../ui/SplitWords'
 import { CountUp } from './CountUp'
 import styles from './Services.module.css'
 
@@ -9,10 +10,10 @@ type Section<K extends keyof Page> = NonNullable<Page[K]>
 export function ImageBanner({ title, subtitle, image }: { title: string; subtitle?: string | null; image?: unknown }) {
   return (
     <header className={styles.banner}>
-      {image ? <MediaImage media={image} alt="" className={styles.bannerImage} sizes="100vw" priority /> : null}
-      <div className={`container ${styles.bannerContent}`}>
-        <h1 className={styles.bannerTitle}><Highlight text={title} /></h1>
-        {subtitle && <p className={styles.bannerSubtitle}>{subtitle}</p>}
+      {image ? <MediaImage media={image} alt="" className={styles.bannerImage} sizes="100vw" preload data-scrub="drift" /> : null}
+      <div className={`container ${styles.bannerContent}`} data-scrub="lift">
+        <h1 className={`${styles.bannerTitle} split-load`}><SplitWords text={title} /></h1>
+        {subtitle && <p className={`${styles.bannerSubtitle} fade-load`}>{subtitle}</p>}
       </div>
     </header>
   )
@@ -23,7 +24,7 @@ export function ServicesIntro({ data }: { data: Section<'servicesIntro'> }) {
   return (
     <section className={styles.intro} aria-labelledby="services-intro-title">
       <div className={`container ${styles.introRow}`}>
-        <div className={`${styles.introHead} reveal`}>
+        <div className={`${styles.introHead} reveal`} data-reveal="left">
           <h2 id="services-intro-title" className={styles.introTitle}><Highlight text={data.heading} /></h2>
           {data.text && <p className={styles.lead}>{data.text}</p>}
         </div>
@@ -58,8 +59,8 @@ export function ServicesCta({ data }: { data: Section<'servicesCta'> }) {
   return (
     <section className={styles.cta} aria-labelledby="services-cta-title">
       <div className={`container ${styles.ctaLayout}`}>
-        {data.image ? <MediaImage media={data.image} alt="" className={`${styles.ctaImage} reveal`} sizes="(min-width: 64rem) 40rem, 100vw" /> : null}
-        <div className={`${styles.ctaBox} reveal`}>
+        {data.image ? <MediaImage media={data.image} alt="" className={`${styles.ctaImage} reveal`} data-reveal="clip" sizes="(min-width: 64rem) 40rem, 100vw" /> : null}
+        <div className={`${styles.ctaBox} reveal`} data-reveal="side">
           {data.background ? <MediaImage media={data.background} alt="" className={styles.ctaBackground} sizes="(min-width: 64rem) 40rem, 100vw" /> : null}
           <h2 id="services-cta-title" className={styles.ctaTitle}><Highlight text={data.heading} /></h2>
           {badge && (linkHref(data.link)

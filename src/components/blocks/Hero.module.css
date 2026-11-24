@@ -58,6 +58,10 @@
   scale: 1.06;
 }
 
+.scroll:active {
+  scale: 0.95;
+}
+
 .scroll svg {
   fill: none;
   stroke: currentColor;
@@ -68,7 +72,8 @@
 
 .image {
   inline-size: 100%;
-  block-size: clamp(8.75rem, 2.25rem + 26.7vw, 35rem);
+  /* Taller minimum so the banner keeps a usable shape on phones. */
+  block-size: clamp(12rem, 2.25rem + 26.7vw, 35rem);
   border-radius: 1.25rem;
   object-fit: cover;
 }
@@ -99,6 +104,68 @@
   .scroll svg {
     inline-size: 1.75rem;
     block-size: 1.75rem;
+  }
+}
+
+
+/* ---------- Motion ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Highlights and the scroll button arrive after the title. */
+  .highlight {
+    animation: rise 900ms var(--ease-out) 550ms both;
+  }
+
+  .highlight:last-child {
+    animation-delay: 650ms;
+  }
+
+  .scroll {
+    animation: pop 900ms var(--ease-spring) 450ms both;
+  }
+
+  /* A gentle nudge on the arrow invites scrolling. */
+  .scroll svg {
+    animation: nudge 2.4s ease-in-out 1.6s infinite;
+  }
+
+  /* The image opens from a narrower window (still painted, so LCP is not delayed). */
+  .image {
+    animation: unveil 1400ms var(--ease-out) 150ms both;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    translate: 0 1rem;
+  }
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    scale: 0.6;
+  }
+}
+
+@keyframes nudge {
+  0%,
+  60%,
+  100% {
+    translate: 0 0;
+  }
+  30% {
+    translate: 0 0.3rem;
+  }
+}
+
+@keyframes unveil {
+  from {
+    clip-path: inset(10% 8% 0 8% round 1.25rem);
+  }
+  to {
+    clip-path: inset(0 0 0 0 round 1.25rem);
   }
 }
 

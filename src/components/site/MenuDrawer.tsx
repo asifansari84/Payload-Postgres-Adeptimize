@@ -82,8 +82,8 @@ export function MenuDrawer({ header, logo }: { header: Header | null; logo?: Rea
 
           <nav className={styles.nav} aria-label="Main">
             <ul className={styles.links} role="list">
-              {menu.map((item) => (
-                <li key={item.id}>
+              {menu.map((item, index) => (
+                <li key={item.id} style={{ '--i': index } as CSSProperties}>
                   <MenuEntry
                     item={item}
                     open={openItem === item.id}

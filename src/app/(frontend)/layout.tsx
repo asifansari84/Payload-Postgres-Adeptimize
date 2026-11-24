@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
 import { Unbounded } from 'next/font/google'
 import { Suspense, type ReactNode } from 'react'
+import { MotionEngine } from '@/components/motion/MotionEngine'
+import { motionScript } from '@/components/motion/motionScript'
 import { NavigationProgress } from '@/components/site/NavigationProgress'
 import { getSiteSettings } from '@/lib/cms'
 import './globals.css'
@@ -42,12 +44,18 @@ export const viewport: Viewport = { themeColor: '#e5f4fd' }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${unbounded.variable}`} data-scroll-behavior="smooth">
+    // suppressHydrationWarning: the motion script adds a class to <html> before React hydrates.
+    <html lang="en" className={`${dmSans.variable} ${unbounded.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
+      <head>
+        {/* Runs before first paint so scroll-revealed content starts hidden, without a flash. */}
+        <script dangerouslySetInnerHTML={{ __html: motionScript }} />
+      </head>
       <body>
         <Suspense fallback={null}>
           <NavigationProgress />
         </Suspense>
         {children}
+        <MotionEngine />
       </body>
     </html>
   )

@@ -49,10 +49,22 @@
 .more summary {
   order: 2;
   justify-self: start;
+  padding-block: 0.5rem;
   color: var(--color-green-dark);
   font-weight: 700;
   cursor: pointer;
   list-style: none;
+}
+
+/* Extra paragraphs open smoothly where the browser supports it. */
+.more::details-content {
+  block-size: 0;
+  overflow: hidden;
+  transition: block-size 450ms var(--ease-out), content-visibility 450ms allow-discrete;
+}
+
+.more[open]::details-content {
+  block-size: auto;
 }
 
 .more summary::-webkit-details-marker {
@@ -128,13 +140,10 @@
 }
 
 .lightButton {
+  --button-fill: var(--color-white);
+  --button-ink: var(--color-navy);
   border-color: var(--color-white);
   color: var(--color-white);
-}
-
-.lightButton:hover {
-  background: var(--color-white);
-  color: var(--color-navy);
 }
 
 .benefitGrid {
@@ -149,12 +158,23 @@
   align-content: start;
 }
 
+.benefitMedia {
+  margin-block-end: 0.75rem;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
 .benefitImage {
   inline-size: 100%;
   aspect-ratio: 4 / 3;
-  margin-block-end: 0.75rem;
-  border-radius: var(--radius-md);
   object-fit: cover;
+  transition: scale 700ms var(--ease-out);
+}
+
+@media (hover: hover) {
+  .benefit:hover .benefitImage {
+    scale: 1.06;
+  }
 }
 
 .benefitNumber {
@@ -175,6 +195,13 @@
   .benefitsLayout {
     grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
     gap: 4rem;
+  }
+
+  /* Heading and button stay in view while the benefit cards scroll by. */
+  .benefitsIntro {
+    position: sticky;
+    inset-block-start: calc(var(--header-height) + 2rem);
+    align-self: start;
   }
 }
 
@@ -288,6 +315,12 @@
     grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
     gap: 4rem;
   }
+
+  .resultsIntro {
+    position: sticky;
+    inset-block-start: calc(var(--header-height) + 2rem);
+    align-self: start;
+  }
 }
 
 /* Strategy form */
@@ -329,7 +362,16 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .accordionItem {
+  .accordionItem,
+  .benefitImage,
+  .more::details-content {
     transition: none;
+  }
+}
+
+/* Phones: the content below is left-aligned, so the heading is too. */
+@media (max-width: 47.99rem) {
+  .center {
+    text-align: start;
   }
 }

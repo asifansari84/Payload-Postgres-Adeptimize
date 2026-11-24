@@ -677,7 +677,7 @@ export interface Media {
   focalY?: number | null;
 }
 /**
- * Manage the fields and confirmation text for website forms.
+ * Manage the fields and confirmation text for website forms. The footer newsletter signup is built in.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "forms".
@@ -685,11 +685,14 @@ export interface Media {
 export interface Form {
   id: number;
   title: string;
+  /**
+   * Unique form ID, used in the form address. "contact" is the main contact form.
+   */
   slug: string;
   status: 'draft' | 'published';
   fields: {
     /**
-     * Used as the submitted field key.
+     * Used as the submitted field key, e.g. "email" or "company".
      */
     name: string;
     label: string;
@@ -1473,7 +1476,7 @@ export interface User {
   collection: 'users';
 }
 /**
- * Contact messages and newsletter signups submitted through the website.
+ * Leads from the website forms, grouped by form.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "contact-submissions".
@@ -1495,6 +1498,10 @@ export interface ContactSubmission {
     | number
     | boolean
     | null;
+  /**
+   * The page the form was submitted from. Captured automatically.
+   */
+  sourceUrl?: string | null;
   status: 'new' | 'in-progress' | 'resolved';
   updatedAt: string;
   createdAt: string;
@@ -2546,6 +2553,7 @@ export interface ContactSubmissionsSelect<T extends boolean = true> {
   phone?: T;
   message?: T;
   submissionData?: T;
+  sourceUrl?: T;
   status?: T;
   updatedAt?: T;
   createdAt?: T;

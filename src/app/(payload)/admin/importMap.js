@@ -32,6 +32,7 @@ import { MediaThumbnailCell as MediaThumbnailCell_dd9c8498169114ae90ff28d9b78aa6
 import { FixedToolbarFeatureClient as FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { default as default_314a9a327682c5a5ca5761af49789da5 } from '../../../components/admin/PostSearchPreview'
 import { default as default_37ab194fe8d64aa61bb1bc2922224097 } from '../../../components/admin/MediaCreatedRedirect'
+import { default as default_6f2221712f5b9a9fcb5d9546f7609335 } from '../../../components/admin/leads/LeadsView'
 import { AvatarCell as AvatarCell_47861655001cbf48e6259b36cb95a68a } from '../../../components/admin/UserAvatar'
 import { LinkRowLabel as LinkRowLabel_a22f15833f5c099d83eec5874403c04c } from '../../../components/admin/RowLabel'
 import { SocialRowLabel as SocialRowLabel_a22f15833f5c099d83eec5874403c04c } from '../../../components/admin/RowLabel'
@@ -80,6 +81,7 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#FixedToolbarFeatureClient": FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "/components/admin/PostSearchPreview#default": default_314a9a327682c5a5ca5761af49789da5,
   "/components/admin/MediaCreatedRedirect#default": default_37ab194fe8d64aa61bb1bc2922224097,
+  "/components/admin/leads/LeadsView#default": default_6f2221712f5b9a9fcb5d9546f7609335,
   "/components/admin/UserAvatar#AvatarCell": AvatarCell_47861655001cbf48e6259b36cb95a68a,
   "/components/admin/RowLabel#LinkRowLabel": LinkRowLabel_a22f15833f5c099d83eec5874403c04c,
   "/components/admin/RowLabel#SocialRowLabel": SocialRowLabel_a22f15833f5c099d83eec5874403c04c,

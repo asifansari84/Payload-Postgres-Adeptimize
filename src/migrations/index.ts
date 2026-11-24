@@ -26,6 +26,7 @@ import * as migration_20261123_132118_remove_admin_logo_tone from './20261123_13
 import * as migration_20261123_132626_site_favicon from './20261123_132626_site_favicon';
 import * as migration_20261123_135154_discourage_search_engines from './20261123_135154_discourage_search_engines';
 import * as migration_20261123_135942_content_trash from './20261123_135942_content_trash';
+import * as migration_20261124_122734_lead_source_url from './20261124_122734_lead_source_url';
 
 export const migrations = [
   {
@@ -166,6 +167,11 @@ export const migrations = [
   {
     up: migration_20261123_135942_content_trash.up,
     down: migration_20261123_135942_content_trash.down,
-    name: '20261123_135942_content_trash'
+    name: '20261123_135942_content_trash',
+  },
+  {
+    up: migration_20261124_122734_lead_source_url.up,
+    down: migration_20261124_122734_lead_source_url.down,
+    name: '20261124_122734_lead_source_url'
   },
 ];

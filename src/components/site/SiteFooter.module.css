@@ -134,9 +134,12 @@
   font-style: normal;
 }
 
+.newsletterWrap {
+  max-inline-size: 34rem;
+}
+
 .newsletter {
   position: relative;
-  max-inline-size: 34rem;
 }
 
 .newsletter input[type='email'] {
@@ -154,8 +157,13 @@
   background-size: 100% 2px;
 }
 
-.newsletter input[type='email']:user-invalid {
+.newsletter input[type='email']:user-invalid,
+.newsletter input[type='email'][aria-invalid='true'] {
   border-block-end-color: #ff8a8a;
+}
+
+.newsletter input[type='email']:disabled {
+  opacity: 0.7;
 }
 
 .newsletter input::placeholder {
@@ -190,6 +198,44 @@
 
 .newsletter button:active {
   scale: 0.9;
+}
+
+.newsletter button:disabled {
+  cursor: progress;
+}
+
+.spinner {
+  inline-size: 0.75rem;
+  block-size: 0.75rem;
+  border: 2px solid currentColor;
+  border-inline-end-color: transparent;
+  border-radius: 50%;
+  animation: spin 700ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+.newsletterStatus {
+  margin-block-start: 0.75rem;
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}
+
+.newsletterStatus:empty {
+  display: none;
+}
+
+.newsletterStatus[data-state='success'] {
+  color: var(--color-green);
+}
+
+.newsletterStatus[data-state='error'] {
+  color: #ff9d9d;
 }
 
 .newsletter button svg {

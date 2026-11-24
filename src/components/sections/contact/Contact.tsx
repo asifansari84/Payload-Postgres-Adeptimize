@@ -2,7 +2,8 @@ import type { Form, Page } from '@/payload-types'
 import { Highlight, MediaImage, pad } from '../../ui/helpers'
 import { SplitWords } from '../../ui/SplitWords'
 import styles from './Contact.module.css'
-import { ContactFormStatus } from './ContactFormStatus'
+import { ContactFormClient } from './ContactFormClient'
+import { DEFAULT_CONTACT_FORM, fromCMSForm } from '@/forms/definitions'
 
 type Section<K extends keyof Page> = NonNullable<Page[K]>
 type Details = Page['contactDetails']
@@ -11,40 +12,10 @@ const paragraphs = (text?: string | null) => text?.split(/\n\s*\n/).map((p) => p
 const lines = (text?: string | null) => text?.split('\n').map((l) => l.trim()).filter(Boolean) ?? []
 const telHref = (phone: string) => `tel:${phone.replace(/[^\d+]/g, '')}`
 
-const fallbackFields: Form['fields'] = [
-  { name: 'name', label: 'Name', type: 'text', required: true },
-  { name: 'email', label: 'Email', type: 'email', required: true },
-  { name: 'message', label: 'Message', type: 'textarea', required: true },
-]
-
+/** The contact form: the CMS form's own fields, or the built-in default. */
 export function ContactForm({ form }: { form: Form | null }) {
-  const fields = form?.fields?.length ? form.fields : fallbackFields
-  const slug = form?.slug ?? 'contact'
-  return (
-    <form className={styles.form} action={`/api/forms/${encodeURIComponent(slug)}`} method="post" aria-label="Contact form">
-      <ContactFormStatus className={styles.notice} successMessage={form?.successMessage} />
-      {fields.map((field) => {
-        const id = `contact-${field.name}`
-        const common = { id, name: field.name, required: Boolean(field.required), className: styles.input }
-        return (
-          <div key={field.id ?? field.name} className={styles.field} data-wide={field.type === 'textarea' || undefined}>
-            <label htmlFor={id}>
-              {field.label}
-              {field.required && <span aria-hidden="true"> *</span>}
-            </label>
-            {field.type === 'textarea'
-              ? <textarea {...common} rows={5} />
-              : <input {...common} type={field.type} autoComplete={field.type === 'email' ? 'email' : field.type === 'tel' ? 'tel' : field.name === 'name' ? 'name' : undefined} />}
-          </div>
-        )
-      })}
-      {/* Spam trap: hidden from people, filled in by bots. */}
-      <label className={styles.honeypot} aria-hidden="true">
-        Website <input name="website" tabIndex={-1} autoComplete="off" />
-      </label>
-      <button type="submit" className="button">{form?.submitLabel || 'Send message'}</button>
-    </form>
-  )
+  const definition = form?.fields?.length ? fromCMSForm(form) : DEFAULT_CONTACT_FORM
+  return <ContactFormClient form={definition} />
 }
 
 export function ContactIntro({ data, form }: { data: Section<'contactIntro'>; form: Form | null }) {

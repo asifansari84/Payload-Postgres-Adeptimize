@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { AdminViewServerProps, CollectionSlug, Where } from 'payload'
+import { CONTACT_SLUG } from '@/forms/definitions'
 
 type Stat = {
   slug: CollectionSlug
@@ -9,7 +10,7 @@ type Stat = {
   /** Count only these documents (and link to the list filtered the same way). */
   where?: Where
   query?: string
-  /** Highlight the box when the count is above zero. */
+  /** Highlight the box when the count (or, with a detail line, the detail count) is above zero. */
   attention?: boolean
 }
 
@@ -21,10 +22,16 @@ const STATS: Stat[] = [
   { slug: 'services', label: 'Services', detail: drafts },
   { slug: 'locations', label: 'Locations', detail: drafts },
   {
+    // One box for the contact form: total leads, how many are still new, and a
+    // link straight to the Contact form tab of the leads list.
     slug: 'contact-submissions',
-    label: 'New messages',
-    where: { status: { equals: 'new' } },
-    query: '?where[status][equals]=new',
+    label: 'Submissions',
+    where: { formSlug: { equals: CONTACT_SLUG } },
+    detail: {
+      where: { and: [{ formSlug: { equals: CONTACT_SLUG } }, { status: { equals: 'new' } }] },
+      text: (n: number) => `${n} new`,
+    },
+    query: `?form=${CONTACT_SLUG}`,
     attention: true,
   },
 ]
@@ -64,9 +71,9 @@ export default async function ContentDashboard({
 
       <ul className="adeptimize-content-dashboard__stats">
         {results.map(({ stat, total, detail }) => {
-          const highlight = stat.attention && (total ?? 0) > 0
+          const highlight = stat.attention && ((stat.detail ? detail : total) ?? 0) > 0
           return (
-            <li key={stat.slug}>
+            <li key={stat.label}>
               <Link
                 className={`adeptimize-stat${highlight ? ' adeptimize-stat--attention' : ''}`}
                 href={`${admin}/collections/${stat.slug}${stat.query ?? ''}`}

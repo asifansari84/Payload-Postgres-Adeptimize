@@ -1,4 +1,38 @@
-import type { CollectionConfig, FieldAccess } from 'payload'
+import type { CollectionConfig, FieldAccess, TextField } from 'payload'
+
+/**
+ * Optional social profile link. Must point to the platform's own site; a link
+ * typed without "https://" gets it added. Empty means "don't show".
+ */
+const socialLink = (name: string, label: string, hosts: string[], example: string): TextField => ({
+  name,
+  label,
+  type: 'text',
+  admin: { placeholder: example, width: '50%' },
+  hooks: {
+    beforeValidate: [
+      ({ value }) => {
+        if (typeof value !== 'string') return value
+        const trimmed = value.trim()
+        if (!trimmed) return null
+        return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`
+      },
+    ],
+  },
+  validate: (value: string | null | undefined) => {
+    if (!value) return true
+    try {
+      const url = new URL(value)
+      const host = url.hostname.toLowerCase().replace(/^(www|m)\./, '')
+      if (url.protocol !== 'https:' && url.protocol !== 'http:') return 'Enter a web address starting with https://'
+      if (!hosts.includes(host)) return `Enter a ${label} link, e.g. ${example}`
+      if (url.pathname.replace(/\/+$/, '') === '') return `Add the profile part of the link, e.g. ${example}`
+      return value.length <= 300 || 'This link is too long.'
+    } catch {
+      return `Enter a ${label} link, e.g. ${example}`
+    }
+  },
+})
 
 /** Set once when the account is created; never changed afterwards (UI, popup or API). */
 const fixedAfterCreate: { create: FieldAccess; update: FieldAccess } = {
@@ -13,8 +47,6 @@ export const Users: CollectionConfig = {
     // Show people by name in the Users list and in pickers like a post's Author.
     useAsTitle: 'displayName',
     defaultColumns: ['avatar', 'name', 'username', 'email', 'updatedAt'],
-    // Clicking a user opens a popup to edit their name and avatar.
-    components: { beforeListTable: ['/components/admin/users/UserEditDialog'] },
   },
   hooks: {
     // Keep "Name (username)" in sync so pickers can tell people with the same name apart.
@@ -27,6 +59,11 @@ export const Users: CollectionConfig = {
       },
     ],
   },
+  access: {
+    // Hides the "Force Unlock" button. Accounts locked by too many failed
+    // logins still unlock themselves after the lock time (10 minutes).
+    unlock: () => false,
+  },
   // Sign in with either a username or an email address.
   auth: {
     loginWithUsername: {
@@ -36,7 +73,8 @@ export const Users: CollectionConfig = {
     },
   },
   // When a user is attached to another document (e.g. a post's author), only expose their name.
-  defaultPopulate: { name: true },
+  // Social links are included so a post's author box can show them.
+  defaultPopulate: { name: true, bio: true, social: true },
   fields: [
     {
       name: 'name',
@@ -86,6 +124,45 @@ export const Users: CollectionConfig = {
         description: 'Optional profile picture. A placeholder icon is shown when empty.',
         components: { Cell: '/components/admin/users/UserCells#AvatarCell' },
       },
+    },
+    {
+      name: 'bio',
+      type: 'textarea',
+      maxLength: 1000,
+      admin: {
+        rows: 5,
+        placeholder: 'A short introduction: background, expertise, experience and what you write about.',
+        description: 'Optional. Up to 1,000 characters (e.g. for the author box on posts).',
+      },
+      hooks: { beforeValidate: [({ value }) => (typeof value === 'string' ? value.trim() || null : value)] },
+    },
+    {
+      name: 'social',
+      label: 'Social media links',
+      type: 'group',
+      admin: {
+        description: 'Optional. Only the links filled in here are shown (e.g. on posts by this author).',
+      },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            socialLink('facebook', 'Facebook', ['facebook.com', 'fb.com'], 'https://facebook.com/yourname'),
+            socialLink('instagram', 'Instagram', ['instagram.com'], 'https://instagram.com/yourname'),
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            socialLink('x', 'X (Twitter)', ['x.com', 'twitter.com'], 'https://x.com/yourname'),
+            socialLink('linkedin', 'LinkedIn', ['linkedin.com'], 'https://linkedin.com/in/yourname'),
+          ],
+        },
+        {
+          type: 'row',
+          fields: [socialLink('tiktok', 'TikTok', ['tiktok.com'], 'https://tiktok.com/@yourname')],
+        },
+      ],
     },
   ],
 }

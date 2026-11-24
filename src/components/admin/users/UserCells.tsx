@@ -1,42 +1,44 @@
 'use client'
 
+import { useConfig } from '@payloadcms/ui'
+import Link from 'next/link'
 import type { DefaultCellComponentProps } from 'payload'
 import { Avatar, type AvatarValue } from '../UserAvatar'
 
-/** Fired by a Users list cell; UserEditDialog listens and opens the popup. */
-export const EDIT_USER_EVENT = 'adeptimize:edit-user'
-
-export const openUserEditor = (id: number | string) =>
-  window.dispatchEvent(new CustomEvent(EDIT_USER_EVENT, { detail: { id: String(id) } }))
-
 const nameOf = (rowData: DefaultCellComponentProps['rowData']) => (typeof rowData?.name === 'string' && rowData.name) || 'User'
 
-/** Users list "Avatar" column: the picture (or placeholder); opens the edit popup. */
-export function AvatarCell({ cellData, rowData }: DefaultCellComponentProps) {
+/** The user's edit page, for both the avatar and the name cell. */
+function useEditURL(rowData: DefaultCellComponentProps['rowData'], linkURL?: string) {
+  const { config } = useConfig()
+  if (linkURL) return linkURL
+  if (rowData?.id == null) return null
+  const admin = config.routes.admin === '/' ? '' : config.routes.admin
+  return `${admin}/collections/users/${encodeURIComponent(String(rowData.id))}`
+}
+
+/** Users list "Avatar" column: the picture (or placeholder instead of "<No Avatar>"), linking to the edit page. */
+export function AvatarCell({ cellData, rowData, linkURL }: DefaultCellComponentProps) {
+  const href = useEditURL(rowData, linkURL)
   const name = nameOf(rowData)
-  return (
-    <button
-      type="button"
-      className="adeptimize-user-cell"
-      data-user-id={rowData?.id}
-      aria-label={`Edit ${name}`}
-      onClick={() => rowData?.id != null && openUserEditor(rowData.id)}
-    >
-      <Avatar alt="" avatar={cellData as AvatarValue} size={32} />
-    </button>
+  const avatar = <Avatar alt="" avatar={cellData as AvatarValue} size={32} />
+  return href ? (
+    <Link className="adeptimize-user-cell" href={href} prefetch={false} aria-label={`Edit ${name}`}>
+      {avatar}
+    </Link>
+  ) : (
+    avatar
   )
 }
 
-/** Users list "Name" column: opens the edit popup instead of the full edit page. */
-export function NameCell({ cellData, rowData }: DefaultCellComponentProps) {
-  return (
-    <button
-      type="button"
-      className="adeptimize-user-cell adeptimize-user-cell--name"
-      data-user-id={rowData?.id}
-      onClick={() => rowData?.id != null && openUserEditor(rowData.id)}
-    >
-      {typeof cellData === 'string' && cellData ? cellData : nameOf(rowData)}
-    </button>
+/** Users list "Name" column: links to the edit page too. */
+export function NameCell({ cellData, rowData, linkURL }: DefaultCellComponentProps) {
+  const href = useEditURL(rowData, linkURL)
+  const name = typeof cellData === 'string' && cellData ? cellData : nameOf(rowData)
+  return href ? (
+    <Link className="adeptimize-user-cell adeptimize-user-cell--name" href={href} prefetch={false}>
+      {name}
+    </Link>
+  ) : (
+    name
   )
 }

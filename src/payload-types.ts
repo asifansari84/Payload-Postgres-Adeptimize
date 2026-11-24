@@ -1451,6 +1451,20 @@ export interface User {
    * Optional profile picture. A placeholder icon is shown when empty.
    */
   avatar?: (number | null) | Media;
+  /**
+   * Optional. Up to 1,000 characters (e.g. for the author box on posts).
+   */
+  bio?: string | null;
+  /**
+   * Optional. Only the links filled in here are shown (e.g. on posts by this author).
+   */
+  social?: {
+    facebook?: string | null;
+    instagram?: string | null;
+    x?: string | null;
+    linkedin?: string | null;
+    tiktok?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
   /**
@@ -2569,6 +2583,16 @@ export interface UsersSelect<T extends boolean = true> {
   name?: T;
   displayName?: T;
   avatar?: T;
+  bio?: T;
+  social?:
+    | T
+    | {
+        facebook?: T;
+        instagram?: T;
+        x?: T;
+        linkedin?: T;
+        tiktok?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   email?: T;

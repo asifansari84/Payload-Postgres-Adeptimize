@@ -175,8 +175,13 @@
     inset-block-start: min(0px, calc(100svh - var(--panel-h, 100svh)));
   }
 
+  /* The last panel does not stick: it ends the stack and scrolls away with
+     it. Its offset must be reset too, or the sticky `top` above would shift
+     it upward and the panel beneath would show below it. */
   .panels[data-stack-ready] .panel:last-child {
     position: relative;
+    inset-block-start: auto;
+    min-block-size: var(--stack-cover, auto);
   }
 }
 

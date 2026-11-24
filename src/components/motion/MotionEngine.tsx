@@ -298,7 +298,13 @@ function stacks(gsap: Gsap) {
 
   gsap.utils.toArray<HTMLElement>('[data-stack]').forEach((list) => {
     const panels = Array.from(list.children) as HTMLElement[]
-    const measure = () => panels.forEach((panel) => panel.style.setProperty('--panel-h', `${panel.offsetHeight}px`))
+    const measure = () => {
+      panels.forEach((panel) => panel.style.setProperty('--panel-h', `${panel.offsetHeight}px`))
+      // The last panel must be at least as tall as any before it, so at the
+      // end of the stack it covers them completely, whatever the content.
+      const tallest = Math.max(0, ...panels.slice(0, -1).map((panel) => panel.offsetHeight))
+      list.style.setProperty('--stack-cover', `${tallest}px`)
+    }
     measure()
     list.setAttribute('data-stack-ready', '')
     const observer = new ResizeObserver(measure)
@@ -306,6 +312,7 @@ function stacks(gsap: Gsap) {
     cleanups.push(() => {
       observer.disconnect()
       list.removeAttribute('data-stack-ready')
+      list.style.removeProperty('--stack-cover')
       panels.forEach((panel) => panel.style.removeProperty('--panel-h'))
     })
 
